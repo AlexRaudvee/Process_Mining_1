@@ -8,11 +8,11 @@ This prediction model is to be developed using Python using whatever data analys
 
 In general, process prediction techniques can be categorized into local and global techniques. Local techniques use information from the current case (for example the insurance claim) only to base the prediction on. Global techniques use all available information, such as for example the load of the system or even today's weather in their predictions. 
 
-# The Challenge
+## The Challenge
 
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
 
-# The Data
+## The Data
 
 The dataset for which we would like to predict the next event and time until next event can be any of the following datasets (in order of complexity):
 
@@ -23,7 +23,7 @@ The dataset for which we would like to predict the next event and time until nex
 
 To test and train our method, we are going to use synthetic datasets found [here](https://data.4tu.nl/search?q=:keyword:%20%22real%20life%20event%20logs%22)
 
-# The Delivarables 
+## The Delivarables 
 
 A rough schedule for the sprint deliverables is as follows:
 
@@ -39,5 +39,5 @@ After six weeks, again an updated tool is expected which can produce for any run
 
 The final deliverable is the final poster (and the presentation thereof) about our work and the tool itself.
 
-# How to set up enviorment
+## How to set up enviorment
 
