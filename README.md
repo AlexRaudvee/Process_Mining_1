@@ -12,6 +12,9 @@ In general, process prediction techniques can be categorized into local and glob
 
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
 
+## Files 
+... soon ...
+
 ## The Data
 
 The dataset for which we would like to predict the next event and time until next event can be any of the following datasets (in order of complexity):
