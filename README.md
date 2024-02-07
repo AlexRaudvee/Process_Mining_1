@@ -16,7 +16,7 @@ The challenge in this project is to not only develop a tool to do the prediction
 
 The dataset for which we would like to predict the next event and time until next event can be any of the following datasets (in order of complexity):
 
-- BPI Challenge 2012: [can be found here]([http://www.example.com](https://doi.org/10.4121/uuid:3926db30-f712-4394-aebc-75976070e91f)https://doi.org/10.4121/uuid:3926db30-f712-4394-aebc-75976070e91f)
+- BPI Challenge 2012: [can be found here](https://doi.org/10.4121/uuid:3926db30-f712-4394-aebc-75976070e91f)
 - Italian Road fines data: [can be found here](https://doi.org/10.4121/uuid:270fd440-1057-4fb9-89a9-b699b47990f5)
 - BPI Challenge 2017: [can be found here](https://doi.org/10.4121/uuid:5f3067df-f10b-45da-b98b-86ae4c7a310b)
 - BPI Challenge 2018: [can be found here](https://doi.org/10.4121/uuid:3301445f-95e8-4ff0-98a4-901f1f204972)
@@ -40,4 +40,30 @@ After six weeks, again an updated tool is expected which can produce for any run
 The final deliverable is the final poster (and the presentation thereof) about our work and the tool itself.
 
 ## How to set up enviorment
+
+1. Download all files and place in one folder
+2. Create virtual envioremnt .venv in this folder (can be .conda if you want)
+   
+   For windows:
+   ```python
+   python -m venv .venv
+   ```
+   For Mac and Linux:
+   ```python
+   python3 -m venv .venv
+   ```
+3. Activate the virtual enviroment
+   
+   For Windovs:
+   ```python
+   myenv\Scripts\activate
+   ```
+   For Mac and Linux:
+   ```python
+   source myenv/bin/activate
+   ```
+4. install all libraries that we used to develop this code
+  ```python
+  pip install -r requirements.txt
+  ```
 
