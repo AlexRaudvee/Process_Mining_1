@@ -13,7 +13,14 @@ In general, process prediction techniques can be categorized into local and glob
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
 
 ## Files 
-... soon ...
+
+**advanced_models.ipynb** - here you can find the additional things that we tried for training the models
+**BPI_2012_naive_model.ipynb** - this file represents the testing of the naive model, and small visualizations of dataset including the evaluation of the model (of dataset from 2012)
+**BPI_2017_naive_model.ipynb** - this file represents the testing of the naive model (of dataset from 2017)
+**data_cleaning_2012_2017.ipynb** - this file shows how the cleaning of the data were done before applying the naive model and some of the visualizations
+**data_exp_vis.ipynb** - this file includes the first visualizations for the first and primary data exploration
+**visualizations.ipynb** - in this file you can find all the main visualizatons that were done during the sprint
+**requirements.txt** - this file includes all requirements that you need to have to run the code
 
 ## The Data
 
