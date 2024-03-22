@@ -14,7 +14,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from config import path_to_data_folder, slice_index
+from config import path_to_data_folder, slice_index, chosed_dataset
 
 os.makedirs(f'{os.getcwd()}/data', exist_ok=True)
 path_to_data_dick = f'{os.getcwd()}/data'
@@ -33,6 +33,14 @@ def saver(df: pd.DataFrame, path_name: str):
         else:
             df.loc[subset].to_csv(path_name, header=None, mode='a', index=True)
 
+def saver_json(df: pd.DataFrame, path_name: str):
+    chunks = np.array_split(df.index, 100) # split into 100 chunks
+
+    for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
+        if chunck == 0: # first row
+            df.loc[subset].to_json(path_name, mode='w', index=True)
+        else:
+            df.loc[subset].to_json(path_name, header=None, mode='a', index=True)
 
 def print_terminal_width_symbol(symbol):
     # Get the terminal width
@@ -518,3 +526,47 @@ for file_name in file_list:
         plt.grid(True)
         plt.show()
 
+print_terminal_width_symbol('#')
+print('\n')
+print_centered_text("EXTRACTION OF TRACES AND SAVING THEM FOR THE MODEL")
+
+
+dataframe_train = pd.read_csv(f'data/{chosed_dataset}.csv')
+
+dataframe_train = pm4py.format_dataframe(dataframe_train, case_id='case:concept:name', activity_key='concept:name', timestamp_key='time:timestamp')
+
+event_log_train = pm4py.convert_to_event_log(dataframe_train)
+    
+pm4py.write_xes(event_log_train, f'data/event_log_{chosed_dataset}.xes')
+
+event_logs_files_names = [f'event_log_{chosed_dataset}']
+
+for event_log_file in event_logs_files_names:
+
+    log = pm4py.read_xes(os.path.join(f"data/{event_log_file}.xes"))
+    log = pm4py.convert_to_event_log(log)
+
+    trace_df_list = []
+    for trace in log:
+        case_concept_name = trace.attributes['concept:name']
+        concept_name_col = []
+        timestamp_col = []
+        
+        for event in trace:
+            concept_name_col.append(event['concept:name'])
+            timestamp_col.append(event['time:timestamp'])
+        
+        df_trace = pd.DataFrame({'concept:name': concept_name_col, 'time:timestamp': timestamp_col})
+        df_trace = pd.concat([df_trace, pd.DataFrame({'concept:name': ['END'], 'time:timestamp': [timestamp_col[-1]]})], ignore_index=True)
+        df_trace.name = f'{case_concept_name}'
+
+        trace_df_list.append(df_trace)
+
+    df_final = pd.DataFrame({'case:concept:name': [df.name for df in trace_df_list], 'trace': trace_df_list})
+
+    saver_json(df=df_final, path_name=f'data/traces_{event_log_file}.json')
+
+    if os.path.exists(f'data/{event_log_file}.xes'):
+        # Remove the file
+        os.remove(f'data/{event_log_file}.xes')
+    
