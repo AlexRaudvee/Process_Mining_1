@@ -12,15 +12,23 @@ In general, process prediction techniques can be categorized into local and glob
 
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
 
-## Files 
+ Files
 
-- **advanced_models.ipynb** - here you can find the additional things that we tried for training the models
-- **BPI_2012_naive_model.ipynb** - this file represents the testing of the naive model, and small visualizations of dataset including the evaluation of the model (of dataset from 2012)
-- **BPI_2017_naive_model.ipynb** - this file represents the testing of the naive model (of dataset from 2017)
+- **requirements.txt** - this file includes all required libraries that you need to have to run the code.
+- **advanced_models_2012_2017.ipynb.ipynb** - here you can find the additional things for extracting the data from naive model.
 - **data_cleaning_2012_2017.ipynb** - this file shows how the cleaning of the data were done before applying the naive model and some of the visualizations
+- **naive_model.ipynb** - this file represents the testing of the naive model, and small visualizations of dataset including the evaluation of the model for 'BPI_Challenge_2017'.
+- **train_test_sep.ipynb** - this is for splitting the training and testing data with the ratio 8:2 for 'BPI_Challenge_2017'.
+- **cleaning_feature_extraction.py** - this file includes some of the cleaning methods and find out the feature extactions for 'BPI_Challenge_2017', 'BPI Challenge 2012' and 'Italian Road fines data'.
 - **data_exp_vis.ipynb** - this file includes the first visualizations for the first and primary data exploration
-- **visualizations.ipynb** - in this file you can find all the main visualizatons that were done during the sprint
-- **requirements.txt** - this file includes all requirements that you need to have to run the code
+- **visualizations.ipynb** and **visualization.ipynb** - in these files you can find all the main visualizatons that were done for the sprints.
+- **data_cleaning_2012_2017_start.ipynb** - in this file, using the cleaned dataset for 2017, and making some visualizations about 'concept: name'.
+- **models_run.py** - this file is for the models results about naive model, XGBoost and RFC.
+- **modesl_train_xgboost_rfc.ipynb** - this file is using train and testing splitting datasets to get the models results about XGBoost and RFC.
+- **pm4py_work.ipynb** - this file is for finding the process tress about 'BPI_Challenge_2017'.
+- **traces_extraction.ipynb** - this file finds the actual traces based on 'case: concept: name' with 'BPI_Challenge_2017' dataset.
+- **train_test_split.py** - this file is for the functions of how to split the train and test dataset.
+
 
 ## The Data
 
@@ -32,6 +40,11 @@ The dataset for which we would like to predict the next event and time until nex
 - BPI Challenge 2018: [can be found here](https://doi.org/10.4121/uuid:3301445f-95e8-4ff0-98a4-901f1f204972)
 
 To test and train our method, we are going to use synthetic datasets found [here](https://data.4tu.nl/search?q=:keyword:%20%22real%20life%20event%20logs%22)
+
+## The datasets that mainly use in the explorations.
+- **data_cleaning_2012_2017.ipynb**: running this for the 'clean_BPI_Challenge_2017'
+- **train_test_sep.ipynb**: using 'clean_BPI_Challenge_2012' as input dataset to get 3 separate files, testing, training and the merged dataset.
+
 
 ## The Delivarables 
 
