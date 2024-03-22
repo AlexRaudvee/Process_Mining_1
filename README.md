@@ -97,3 +97,4 @@ The final deliverable is the final poster (and the presentation thereof) about o
 3. For obtaining results from the models, you will have to run models_run.py, this file will print out results and graphs (close the graphs to continue running the code)
 4. trace_prediction.ipynb is still in progress as this model is quiete tough you can run and obtain the results as a dataframe of one of the trace or for all of them (can take a long time)
 5. visualization files can be run as well, but most of the important images are returning during the run of the above mentioned files.
+6. main.py file is still in progress (do not run it)
