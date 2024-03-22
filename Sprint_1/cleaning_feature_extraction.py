@@ -554,7 +554,7 @@ for event_log_file in event_logs_files_names:
         
         for event in trace:
             concept_name_col.append(event['concept:name'])
-            timestamp_col.append(event['time:timestamp'])
+            timestamp_col.append(str(event['time:timestamp']))
         
         df_trace = pd.DataFrame({'concept:name': concept_name_col, 'time:timestamp': timestamp_col})
         df_trace = pd.concat([df_trace, pd.DataFrame({'concept:name': ['END'], 'time:timestamp': [timestamp_col[-1]]})], ignore_index=True)
