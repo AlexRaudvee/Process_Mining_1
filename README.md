@@ -90,3 +90,10 @@ The final deliverable is the final poster (and the presentation thereof) about o
   pip install -r requirements.txt
   ```
 
+## How to run the code
+
+1. First you will have to change the variables in config.py (description of variables inside the file)
+2. Then you run cleaning_feature_extraction.py this code will create a data folder with all needed inputs for other files (this code prints out images, so close them for continue of the code running)
+3. For obtaining results from the models, you will have to run models_run.py, this file will print out results and graphs (close the graphs to continue running the code)
+4. trace_prediction.ipynb is still in progress as this model is quiete tough you can run and obtain the results as a dataframe of one of the trace or for all of them (can take a long time)
+5. visualization files can be run as well, but most of the important images are returning during the run of the above mentioned files.
