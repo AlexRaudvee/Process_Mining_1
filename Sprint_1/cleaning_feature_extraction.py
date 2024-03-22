@@ -14,7 +14,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from config import path_to_data_folder
+from config import path_to_data_folder, slice_index
 
 os.makedirs(f'{os.getcwd()}/data', exist_ok=True)
 path_to_data_dick = f'{os.getcwd()}/data'
@@ -95,7 +95,10 @@ file_list = ['BPI_Challenge_2012', 'BPI_Challenge_2017', 'Road_Traffic_Fine_Mana
 
 # preprocess the dataframes in the same way
 for file_name in file_list:
-    df = pd.read_csv(f"{path_to_data_dick}/{file_name}.csv")
+    if slice_index == None:
+        df = pd.read_csv(f"{path_to_data_dick}/{file_name}.csv")
+    else:
+        df = pd.read_csv(f"{path_to_data_dick}/{file_name}.csv")[:slice_index]
 
     df = df.dropna(subset=['case:concept:name'])
 

@@ -21,24 +21,32 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder, N
 # HERE YOU HAVE TO CHOOSE BPI_Challenge_2012 or BPI_Challenge_2017
 chosed_dataset = 'BPI_Challenge_2017'
 
-# extract the 1-3 lags
-df = pd.read_csv(f'data/{chosed_dataset}_naive.csv')
+# extract the 1-10 lags
+df = pd.read_csv(f'../data/{chosed_dataset}_naive.csv')
 
-df['concept:name - lag_1'] = df.groupby('case:concept:name')['concept:name'].shift(1)
-df['concept:name - lag_2'] = df.groupby('case:concept:name')['concept:name'].shift(2)
-df['concept:name - lag_3'] = df.groupby('case:concept:name')['concept:name'].shift(3)
+df['concept:name - lag_1'] = df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
+df['concept:name - lag_2'] = df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
+df['concept:name - lag_3'] = df.groupby('case:concept:name')['concept:name'].shift(3).fillna('absent')
+df['concept:name - lag_4'] = df.groupby('case:concept:name')['concept:name'].shift(4).fillna('absent')
+df['concept:name - lag_5'] = df.groupby('case:concept:name')['concept:name'].shift(5).fillna('absent')
+df['concept:name - lag_6'] = df.groupby('case:concept:name')['concept:name'].shift(6).fillna('absent')
+df['concept:name - lag_7'] = df.groupby('case:concept:name')['concept:name'].shift(7).fillna('absent')
+df['concept:name - lag_8'] = df.groupby('case:concept:name')['concept:name'].shift(8).fillna('absent')
+df['concept:name - lag_9'] = df.groupby('case:concept:name')['concept:name'].shift(9).fillna('absent')
+df['concept:name - lag_10'] = df.groupby('case:concept:name')['concept:name'].shift(10).fillna('absent')
 
 # define target
-df['next concept:name'] = df.groupby('case:concept:name')['concept:name'].shift(-1)
+df['next concept:name'] = df.groupby('case:concept:name')['concept:name'].shift(-1).fillna('END')
 
 # # Split the DataFrame 
 # df = df.iloc[:1000]
+
 
 # Prepare data
 
 df_train, df_test = train_test_split_custom(df=df, test_size=0.2, lags=True)
 
-columns = ['concept:name' , 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'next concept:name']
+columns = ['concept:name' , 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name']
 label_encoders = {}
 for column in columns:
         label_encoder = LabelEncoder()
@@ -47,28 +55,26 @@ for column in columns:
         df[column] = label_encoder.fit_transform(df[column])
         label_encoders[column] = label_encoder
 
-X_train = df_train[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3']]
-X_test = df_test[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3']]
+X_train = df_train[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10']]
+X_test = df_test[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10']]
 
 y_train = df_train[['next concept:name']]
 y_test = df_test[['next concept:name']]
 
 print(f"""
-    ########################################### RFC INFO ###########################################\n
-      inputs: {[col for col in X_test.columns]} \n
-      target: {[col for col in y_test.columns]} \n
-    ################################################################################################\n
+    inputs: {[col for col in X_test.columns]} \n
+    target: {[col for col in y_test.columns]}
 """)
 
-if not os.path.exists('model_weights/random_forest.pkl'):
+if not os.path.exists('../model_weights/random_forest.pkl'):
 
     rf_clf = RandomForestClassifier(n_jobs=-1)
 
     # Define the parameter grid for hyperparameter tuning
     param_grid = {
-        'n_estimators': [21, 22, 23],
-        'max_depth': [18, 19, 20],
-        'min_samples_split': [2, 5, 10],
+        'n_estimators': [23, 30, 40],
+        'max_depth': [15, 20, 25],
+        'min_samples_split': [2, 10, 15],
         'min_samples_leaf': [1, 2, 4]
     }
 
@@ -82,31 +88,33 @@ if not os.path.exists('model_weights/random_forest.pkl'):
     best_model = grid_search.best_estimator_
 
     # Print the results
+
     rfc_score = best_model.score(X_test, y_test)
+    print(f"""
+        Best parameters: {grid_search.best_params_}
+    """)
 
     # Save the best model to a file using pickle
     # Create the folder for model weights
-    os.makedirs('model_weights', exist_ok=True)
-    model_filename = 'model_weights/random_forest.pkl'
+    os.makedirs('../model_weights', exist_ok=True)
+    model_filename = '../model_weights/random_forest.pkl'
 
     with open(model_filename, 'wb') as model_file:
         pickle.dump(best_model, model_file)
         
 else: 
-    with open('model_weights/random_forest.pkl', 'rb') as f:
+    with open('../model_weights/random_forest.pkl', 'rb') as f:
         best_model = pickle.load(f)
 
 # Make predictions on the dataset for adding new column
-df['next concept:name rfc'] = label_encoder.inverse_transform(best_model.predict(df[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3']]))
+df['next concept:name rfc'] = label_encoder.inverse_transform(best_model.predict(df[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10']]))
 
 for column in columns:
         df[column] = label_encoders[column].inverse_transform(df[column])
 
-
-
 df.to_csv(f'data/{chosed_dataset}_rfc_xgboost.csv')
 
-df = pd.read_csv(f'data/{chosed_dataset}_rfc_xgboost.csv')
+df = pd.read_csv(f'../data/{chosed_dataset}_rfc_xgboost.csv')
 
 # counting elapsed time
 df['elapsed time:timestamp'] = df['time:timestamp diff'].shift(-1) 
@@ -127,26 +135,7 @@ df['elapsed time:timestamp - lag_7'] = df.groupby(by='case:concept:name')['elaps
 df['elapsed time:timestamp - lag_8'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(8).fillna(-0.00000001)
 df['elapsed time:timestamp - lag_9'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(9).fillna(-0.00000001)
 df['elapsed time:timestamp - lag_10'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(10).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_11'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(11).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_12'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(12).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_13'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(13).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_14'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(14).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_15'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(15).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_16'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(16).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_17'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(17).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_18'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(18).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_19'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(19).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_20'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(20).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_21'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(21).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_22'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(22).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_23'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(23).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_24'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(24).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_25'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(25).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_26'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(26).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_27'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(27).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_28'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(28).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_29'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(29).fillna(-0.00000001)
-df['elapsed time:timestamp - lag_30'] = df.groupby(by='case:concept:name')['elapsed time:timestamp'].shift(30).fillna(-0.00000001)
+
 
 # preprocess the columns before fitting
 preprocessors = {}
@@ -157,7 +146,7 @@ for column in df.columns:
         df['day'] = df['time:timestamp'].dt.day
         df['hour'] = df['time:timestamp'].dt.hour
 
-    elif column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'next concept:name rfc', 'org:resource']:
+    elif column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name rfc', 'org:resource']:
         le = LabelEncoder()
         df[column] = le.fit_transform(df[column])
         preprocessors[column] = le
@@ -174,6 +163,13 @@ X = df[['concept:name',  # this X is for making prediction on the dataframe for 
                     'concept:name - lag_1', 
                     'concept:name - lag_2', 
                     'concept:name - lag_3', 
+                    'concept:name - lag_4', 
+                    'concept:name - lag_5', 
+                    'concept:name - lag_6', 
+                    'concept:name - lag_7', 
+                    'concept:name - lag_8', 
+                    'concept:name - lag_9', 
+                    'concept:name - lag_10', 
                     'next concept:name rfc', 
                     'year', 
                     'month', 
@@ -190,32 +186,19 @@ X = df[['concept:name',  # this X is for making prediction on the dataframe for 
                     'elapsed time:timestamp - lag_7',
                     'elapsed time:timestamp - lag_8',
                     'elapsed time:timestamp - lag_9',
-                    'elapsed time:timestamp - lag_10',
-                    'elapsed time:timestamp - lag_11',
-                    'elapsed time:timestamp - lag_12',
-                    'elapsed time:timestamp - lag_13',
-                    'elapsed time:timestamp - lag_14',
-                    'elapsed time:timestamp - lag_15',
-                    'elapsed time:timestamp - lag_16',
-                    'elapsed time:timestamp - lag_17',
-                    'elapsed time:timestamp - lag_18',
-                    'elapsed time:timestamp - lag_19',
-                    'elapsed time:timestamp - lag_20',
-                    'elapsed time:timestamp - lag_21',
-                    'elapsed time:timestamp - lag_22',
-                    'elapsed time:timestamp - lag_23',
-                    'elapsed time:timestamp - lag_24',
-                    'elapsed time:timestamp - lag_25',
-                    'elapsed time:timestamp - lag_26',
-                    'elapsed time:timestamp - lag_27',
-                    'elapsed time:timestamp - lag_28',
-                    'elapsed time:timestamp - lag_29',
-                    'elapsed time:timestamp - lag_30']]
+                    'elapsed time:timestamp - lag_10']]
 
 X_train = df_train[['concept:name', 
                     'concept:name - lag_1', 
                     'concept:name - lag_2', 
                     'concept:name - lag_3', 
+                    'concept:name - lag_4', 
+                    'concept:name - lag_5', 
+                    'concept:name - lag_6', 
+                    'concept:name - lag_7', 
+                    'concept:name - lag_8', 
+                    'concept:name - lag_9', 
+                    'concept:name - lag_10',  
                     'next concept:name rfc', 
                     'year', 
                     'month', 
@@ -232,32 +215,19 @@ X_train = df_train[['concept:name',
                     'elapsed time:timestamp - lag_7',
                     'elapsed time:timestamp - lag_8',
                     'elapsed time:timestamp - lag_9',
-                    'elapsed time:timestamp - lag_10',
-                    'elapsed time:timestamp - lag_11',
-                    'elapsed time:timestamp - lag_12',
-                    'elapsed time:timestamp - lag_13',
-                    'elapsed time:timestamp - lag_14',
-                    'elapsed time:timestamp - lag_15',
-                    'elapsed time:timestamp - lag_16',
-                    'elapsed time:timestamp - lag_17',
-                    'elapsed time:timestamp - lag_18',
-                    'elapsed time:timestamp - lag_19',
-                    'elapsed time:timestamp - lag_20',
-                    'elapsed time:timestamp - lag_21',
-                    'elapsed time:timestamp - lag_22',
-                    'elapsed time:timestamp - lag_23',
-                    'elapsed time:timestamp - lag_24',
-                    'elapsed time:timestamp - lag_25',
-                    'elapsed time:timestamp - lag_26',
-                    'elapsed time:timestamp - lag_27',
-                    'elapsed time:timestamp - lag_28',
-                    'elapsed time:timestamp - lag_29',
-                    'elapsed time:timestamp - lag_30']]
+                    'elapsed time:timestamp - lag_10']]
 
 X_test = df_test[['concept:name', 
                     'concept:name - lag_1', 
                     'concept:name - lag_2', 
                     'concept:name - lag_3', 
+                    'concept:name - lag_4', 
+                    'concept:name - lag_5', 
+                    'concept:name - lag_6', 
+                    'concept:name - lag_7', 
+                    'concept:name - lag_8', 
+                    'concept:name - lag_9', 
+                    'concept:name - lag_10',  
                     'next concept:name rfc', 
                     'year', 
                     'month', 
@@ -274,37 +244,15 @@ X_test = df_test[['concept:name',
                     'elapsed time:timestamp - lag_7',
                     'elapsed time:timestamp - lag_8',
                     'elapsed time:timestamp - lag_9',
-                    'elapsed time:timestamp - lag_10',
-                    'elapsed time:timestamp - lag_11',
-                    'elapsed time:timestamp - lag_12',
-                    'elapsed time:timestamp - lag_13',
-                    'elapsed time:timestamp - lag_14',
-                    'elapsed time:timestamp - lag_15',
-                    'elapsed time:timestamp - lag_16',
-                    'elapsed time:timestamp - lag_17',
-                    'elapsed time:timestamp - lag_18',
-                    'elapsed time:timestamp - lag_19',
-                    'elapsed time:timestamp - lag_20',
-                    'elapsed time:timestamp - lag_21',
-                    'elapsed time:timestamp - lag_22',
-                    'elapsed time:timestamp - lag_23',
-                    'elapsed time:timestamp - lag_24',
-                    'elapsed time:timestamp - lag_25',
-                    'elapsed time:timestamp - lag_26',
-                    'elapsed time:timestamp - lag_27',
-                    'elapsed time:timestamp - lag_28',
-                    'elapsed time:timestamp - lag_29',
-                    'elapsed time:timestamp - lag_30']]
+                    'elapsed time:timestamp - lag_10']]
 
 y_train = df_train['elapsed time:timestamp']
 
 y_test = df_test[['elapsed time:timestamp']]
 
 print(f"""
-    ###################################### XGBOOST MODEL INFO ######################################\n
-      inputs: {[col for col in X_test.columns]} \n
-      target: {[col for col in y_test.columns]} \n
-    
+    inputs: {[col for col in X_test.columns]} \n
+    target: {[col for col in y_test.columns]}
 """)
 # Define the parameter grid
 
@@ -314,7 +262,7 @@ param_grid = {
     'learning_rate': [0.099]
 }
 # Initialize the model
-model = XGBRegressor(objective='reg:squarederror')
+model = XGBRegressor()
 
 # Initialize GridSearchCV
 grid_search = GridSearchCV(model, param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
@@ -326,46 +274,26 @@ grid_search.fit(X_train, y_train)
 best_params = grid_search.best_params_
 best_estimator = grid_search.best_estimator_
 
-print(f"""
-      best params (XGBoost): {best_params}\n
-""")
+print(f"best params: {best_params}")
 
 # Save the best model
-model_filename = 'model_weights/xgboost.joblib'
-dump(model, model_filename)
+model_filename = '../model_weights/xgboost.joblib'
+dump(best_estimator, model_filename)
         
 # Predict on the test set using the best estimator
 y_pred_test = np.abs(best_estimator.predict(X_test))
 
 # Evaluate the model on the test set
 rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
+print(f'Test RMSE: {rmse_test}')
 
 r2_score_value = r2_score(y_test, y_pred_test)
+print(f'R² score: {r2_score_value}')
 
 # Update the dataframe with predictions from the best model
 df['elapsed time:timestamp XGBoost'] = np.abs(np.where(best_estimator.predict(X) < 0, np.abs(best_estimator.predict(X)) / 10000, best_estimator.predict(X) / 1000))
 df['elapsed time:timestamp'] = df['elapsed time:timestamp'].mask(df['elapsed time:timestamp'] < 0)
-df = df.drop(columns=['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0', 'year', 'month', 'day', 'hour', 'elapsed time:timestamp - lag_10', 'elapsed time:timestamp - lag_9', 'elapsed time:timestamp - lag_8', 'elapsed time:timestamp - lag_7', 'elapsed time:timestamp - lag_6', 'elapsed time:timestamp - lag_5', 'elapsed time:timestamp - lag_4', 'elapsed time:timestamp - lag_3', 'elapsed time:timestamp - lag_2', 'elapsed time:timestamp - lag_1', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3',
-                    'elapsed time:timestamp - lag_11',
-                    'elapsed time:timestamp - lag_12',
-                    'elapsed time:timestamp - lag_13',
-                    'elapsed time:timestamp - lag_14',
-                    'elapsed time:timestamp - lag_15',
-                    'elapsed time:timestamp - lag_16',
-                    'elapsed time:timestamp - lag_17',
-                    'elapsed time:timestamp - lag_18',
-                    'elapsed time:timestamp - lag_19',
-                    'elapsed time:timestamp - lag_20',
-                    'elapsed time:timestamp - lag_21',
-                    'elapsed time:timestamp - lag_22',
-                    'elapsed time:timestamp - lag_23',
-                    'elapsed time:timestamp - lag_24',
-                    'elapsed time:timestamp - lag_25',
-                    'elapsed time:timestamp - lag_26',
-                    'elapsed time:timestamp - lag_27',
-                    'elapsed time:timestamp - lag_28',
-                    'elapsed time:timestamp - lag_29',
-                    'elapsed time:timestamp - lag_30'], errors='ignore')
+df = df.drop(columns=['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0', 'year', 'month', 'day', 'hour', 'elapsed time:timestamp - lag_10', 'elapsed time:timestamp - lag_9', 'elapsed time:timestamp - lag_8', 'elapsed time:timestamp - lag_7', 'elapsed time:timestamp - lag_6', 'elapsed time:timestamp - lag_5', 'elapsed time:timestamp - lag_4', 'elapsed time:timestamp - lag_3', 'elapsed time:timestamp - lag_2', 'elapsed time:timestamp - lag_1', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10'], errors='ignore')
 df['elapsed time:timestamp'] = pd.to_timedelta(df['elapsed time:timestamp'], unit='seconds')
 df['elapsed time:timestamp XGBoost'] = pd.to_timedelta(df['elapsed time:timestamp XGBoost'], unit='seconds')
 df['next time:timestamp XGBoost'] = df['time:timestamp'] + df['elapsed time:timestamp XGBoost']
@@ -373,7 +301,7 @@ df = df.drop(columns=['elapsed time:timestamp XGBoost', 'elapsed time:timestamp'
 
 # Decode categorical columns
 for column in df.columns:
-    if column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'next concept:name rfc', 'org:resource']:
+    if column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name rfc', 'org:resource']:
         le = preprocessors[column]
         df[column] = le.inverse_transform(df[column])
     else:
