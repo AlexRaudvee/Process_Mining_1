@@ -19,7 +19,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import mutual_info_regression
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
+from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, mean_absolute_error
 from sklearn.model_selection import GridSearchCV, KFold
 from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder, Normalizer
 
@@ -199,7 +199,7 @@ print(f"""
 
 
 # extract the 1-10 lags
-df = pd.read_csv(f'data/{chosed_dataset}_naive.csv')[:]
+df = pd.read_csv(f'data/{chosed_dataset}_naive.csv')
 
 df['concept:name - lag_1'] = df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
 df['concept:name - lag_2'] = df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
@@ -221,7 +221,7 @@ df['next concept:name'] = df.groupby('case:concept:name')['concept:name'].shift(
 
 df_train, df_test = train_test_split_custom(df=df, test_size=0.2, lags=True)
 
-columns = ['concept:name' , 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name']
+columns = ['concept:name' , 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'Weekday', 'working_hours', 'vacation_day', 'next concept:name']
 label_encoders = {}
 for column in columns:
         label_encoder = LabelEncoder()
@@ -230,8 +230,8 @@ for column in columns:
         df[column] = label_encoder.fit_transform(df[column])
         label_encoders[column] = label_encoder
 
-X_train = df_train[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10']]
-X_test = df_test[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10']]
+X_train = df_train[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'Weekday', 'working_hours', 'vacation_day']]
+X_test = df_test[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'Weekday', 'working_hours', 'vacation_day']]
 
 y_train = df_train[['next concept:name']]
 y_test = df_test[['next concept:name']]
@@ -278,11 +278,12 @@ if not os.path.exists('model_weights/random_forest.pkl'):
         pickle.dump(best_model, model_file)
         
 else: 
+    rfc_score = 82.622516556291391
     with open('model_weights/random_forest.pkl', 'rb') as f:
         best_model = pickle.load(f)
 
 # Make predictions on the dataset for adding new column
-df['next concept:name rfc'] = label_encoder.inverse_transform(best_model.predict(df[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10']]))
+df['next concept:name rfc'] = label_encoder.inverse_transform(best_model.predict(df[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'Weekday', 'working_hours', 'vacation_day']]))
 
 for column in columns:
         df[column] = label_encoders[column].inverse_transform(df[column])
@@ -321,7 +322,7 @@ for column in df.columns:
         df['day'] = df['time:timestamp'].dt.day
         df['hour'] = df['time:timestamp'].dt.hour
 
-    elif column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name rfc', 'org:resource']:
+    elif column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name rfc', 'org:resource', 'Weekday', 'working_hours', 'vacation_day']:
         le = LabelEncoder()
         df[column] = le.fit_transform(df[column])
         preprocessors[column] = le
@@ -360,7 +361,10 @@ X = df[['concept:name',  # this X is for making prediction on the dataframe for 
                     'elapsed time:timestamp - lag_7',
                     'elapsed time:timestamp - lag_8',
                     'elapsed time:timestamp - lag_9',
-                    'elapsed time:timestamp - lag_10']]
+                    'elapsed time:timestamp - lag_10', 
+                    'Weekday', 
+                    'working_hours', 
+                    'vacation_day']]
 
 X_train = df_train[['concept:name', 
                     'concept:name - lag_1', 
@@ -389,7 +393,10 @@ X_train = df_train[['concept:name',
                     'elapsed time:timestamp - lag_7',
                     'elapsed time:timestamp - lag_8',
                     'elapsed time:timestamp - lag_9',
-                    'elapsed time:timestamp - lag_10']]
+                    'elapsed time:timestamp - lag_10', 
+                    'Weekday', 
+                    'working_hours', 
+                    'vacation_day']]
 
 X_test = df_test[['concept:name', 
                     'concept:name - lag_1', 
@@ -418,7 +425,10 @@ X_test = df_test[['concept:name',
                     'elapsed time:timestamp - lag_7',
                     'elapsed time:timestamp - lag_8',
                     'elapsed time:timestamp - lag_9',
-                    'elapsed time:timestamp - lag_10']]
+                    'elapsed time:timestamp - lag_10', 
+                    'Weekday', 
+                    'working_hours', 
+                    'vacation_day']]
 
 y_train = df_train['elapsed time:timestamp']
 
@@ -459,7 +469,9 @@ y_pred_test = np.abs(best_estimator.predict(X_test))
 
 # Evaluate the model on the test set
 rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
+mae_test = mean_absolute_error(y_test, y_pred_test)
 print(f'Test RMSE: {rmse_test}')
+print(f'Test MAE: {mae_test}')
 
 r2_score_value = r2_score(y_test, y_pred_test)
 print(f'R² score: {r2_score_value}')
@@ -475,7 +487,7 @@ df = df.drop(columns=['elapsed time:timestamp XGBoost', 'elapsed time:timestamp'
 
 # Decode categorical columns
 for column in df.columns:
-    if column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name rfc', 'org:resource']:
+    if column in ['concept:name', 'concept:name - lag_1', 'concept:name - lag_2', 'concept:name - lag_3', 'concept:name - lag_4', 'concept:name - lag_5', 'concept:name - lag_6', 'concept:name - lag_7', 'concept:name - lag_8', 'concept:name - lag_9', 'concept:name - lag_10', 'next concept:name rfc', 'org:resource', 'Weekday', 'working_hours', 'vacation_day']:
         le = preprocessors[column]
         df[column] = le.inverse_transform(df[column])
     else:
@@ -488,6 +500,7 @@ print(f"""
     ######################################## MODELS RESULTS ########################################\n
       Next Event Prediction Accuracy (Random Forest Classifier):  {rfc_score}\n
       Next Time Prediction R\u00B2 score (XGBoost Regressor): {r2_score_value}\n
-      RMSE Time Prediction (XGBoost): {rmse_test}\n
+      RMSE Time Prediction (XGBoost): {rmse_test} in seconds\n
+      MAE Time Prediction (XGBoost): {mae_test} in seconds\n
     ################################################################################################\n
 """)

@@ -37,10 +37,10 @@ def saver_json(df: pd.DataFrame, path_name: str):
     chunks = np.array_split(df.index, 100) # split into 100 chunks
 
     for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
-        if chunck == 0: # first row
-            df.loc[subset].to_json(path_name, mode='w', index=True)
+        if chunck == 0:  # first chunk
+            df.loc[subset].to_json(path_name, orient='records')
         else:
-            df.loc[subset].to_json(path_name, header=None, mode='a', index=True)
+            df.loc[subset].to_json(path_name, orient='records', lines=True, mode='a')
 
 def print_terminal_width_symbol(symbol):
     # Get the terminal width
@@ -564,9 +564,8 @@ for event_log_file in event_logs_files_names:
 
     df_final = pd.DataFrame({'case:concept:name': [df.name for df in trace_df_list], 'trace': trace_df_list})
 
-    saver_json(df=df_final, path_name=f'data/traces_{event_log_file}.json')
+    df_final.to_json(f'data/traces_{event_log_file}.json', orient='records')
 
     if os.path.exists(f'data/{event_log_file}.xes'):
         # Remove the file
         os.remove(f'data/{event_log_file}.xes')
-    

@@ -44,6 +44,13 @@ def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosed_datas
         train_df['concept:name - lag_1'] = train_df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
         train_df['concept:name - lag_2'] = train_df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
         train_df['concept:name - lag_3'] = train_df.groupby('case:concept:name')['concept:name'].shift(3).fillna('absent')
+        train_df['concept:name - lag_4'] = train_df.groupby('case:concept:name')['concept:name'].shift(4).fillna('absent')
+        train_df['concept:name - lag_5'] = train_df.groupby('case:concept:name')['concept:name'].shift(5).fillna('absent')
+        train_df['concept:name - lag_6'] = train_df.groupby('case:concept:name')['concept:name'].shift(6).fillna('absent')
+        train_df['concept:name - lag_7'] = train_df.groupby('case:concept:name')['concept:name'].shift(7).fillna('absent')
+        train_df['concept:name - lag_8'] = train_df.groupby('case:concept:name')['concept:name'].shift(8).fillna('absent')
+        train_df['concept:name - lag_9'] = train_df.groupby('case:concept:name')['concept:name'].shift(9).fillna('absent')
+        train_df['concept:name - lag_10'] = train_df.groupby('case:concept:name')['concept:name'].shift(10).fillna('absent')
 
 
         # define target
@@ -53,7 +60,13 @@ def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosed_datas
         test_df['concept:name - lag_1'] = test_df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
         test_df['concept:name - lag_2'] = test_df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
         test_df['concept:name - lag_3'] = test_df.groupby('case:concept:name')['concept:name'].shift(3).fillna('absent')
-
+        test_df['concept:name - lag_4'] = test_df.groupby('case:concept:name')['concept:name'].shift(4).fillna('absent')
+        test_df['concept:name - lag_5'] = test_df.groupby('case:concept:name')['concept:name'].shift(5).fillna('absent')
+        test_df['concept:name - lag_6'] = test_df.groupby('case:concept:name')['concept:name'].shift(6).fillna('absent')
+        test_df['concept:name - lag_7'] = test_df.groupby('case:concept:name')['concept:name'].shift(7).fillna('absent')
+        test_df['concept:name - lag_8'] = test_df.groupby('case:concept:name')['concept:name'].shift(8).fillna('absent')
+        test_df['concept:name - lag_9'] = test_df.groupby('case:concept:name')['concept:name'].shift(9).fillna('absent')
+        test_df['concept:name - lag_10'] = test_df.groupby('case:concept:name')['concept:name'].shift(10).fillna('absent')
 
         # define target
         test_df['next concept:name'] = test_df.groupby('case:concept:name')['concept:name'].shift(-1).fillna('END')
