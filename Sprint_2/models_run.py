@@ -18,11 +18,17 @@ from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
 from sklearn.model_selection import GridSearchCV, KFold
 from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder, Normalizer
 
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from config import path_to_data_folder, slice_index
+
 # HERE YOU HAVE TO CHOOSE BPI_Challenge_2012 or BPI_Challenge_2017
 chosed_dataset = 'BPI_Challenge_2017'
 
 # extract the 1-10 lags
-df = pd.read_csv(f'../data/{chosed_dataset}_naive.csv')
+df = pd.read_csv(f'../data/{chosed_dataset}_naive.csv')[:]
 
 df['concept:name - lag_1'] = df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
 df['concept:name - lag_2'] = df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
@@ -38,8 +44,6 @@ df['concept:name - lag_10'] = df.groupby('case:concept:name')['concept:name'].sh
 # define target
 df['next concept:name'] = df.groupby('case:concept:name')['concept:name'].shift(-1).fillna('END')
 
-# # Split the DataFrame 
-# df = df.iloc[:1000]
 
 
 # Prepare data
