@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 
 from joblib import dump
-from train_test_split import train_test_split_custom
 from xgboost import XGBRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_squared_error, r2_score
@@ -18,13 +17,14 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from config import path_to_data_folder, slice_index, chosen_dataset
+from config import path_to_data_folder, slice_index, chosen_dataset, slice_traces
+from Sprint_2.train_test_split import train_test_split_custom
 
 df = pd.read_csv(f'data/BPI_Challenge_2017_rfc_xgboost.csv')[:500000]
 
 events_types = df['next concept:name'].unique()
 
-df_traces = pd.read_json(f'data/traces_event_log_{chosen_dataset}.json').tail(1000)
+df_traces = pd.read_json(f'data/traces_event_log_{chosen_dataset}.json').tail(slice_traces)
 
 # encoding of the events
 label_encoder = LabelEncoder()
