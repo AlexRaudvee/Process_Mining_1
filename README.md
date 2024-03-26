@@ -1,4 +1,5 @@
-# Predictive Process Mining Project
+# Predictive Process Mining Project 
+### Introduction
 
 Who has not experienced the situation that you submitted a request into some administrative system (like a reimbursement form, a purchase of a ticket in a webshop, an insurance claim or a request in one of TU/e's administrative systems). How often have you wondered: How long will this request take? 
 
@@ -11,18 +12,18 @@ In general, process prediction techniques can be categorized into local and glob
 ___
 ### Table of Contents
 
-- [Introduction](#Predictive Process Mining Project)
-- [Files Structure](#02)
-- [Data Used](#03)
-- [How Set Up Environment](#04)
-- [How Run The Code](#05)
+- [Introduction](#introduction)
+- [Files Structure](#Files)
+- [Data Used](#The_Data)
+- [How Set Up Environment](#How_to_set_up_environment)
+- [How Run The Code](#How_to_run_the_code)
 ___
 ## The Challenge 
 
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
 ___
 
-## Files {#02}
+## Files
 
 All files are stored in the following way:
 - **Sprint 1 folder** - files being written in the first sprint
@@ -49,7 +50,7 @@ All files are stored in the following way:
    - **trace_prediction.py** - file for running and assembling the recurrent model that predicts the traces
    - **traces_Seq2Seq.ipynb** - file with seq2seq model but weren't used in the project due to high complexity of the model and computational difficulties.
 ___
-## The Data {#03}
+## The Data
 
 The dataset for which we would like to predict the next event and time until next event can be any of the following datasets (in order of complexity):
 
@@ -82,7 +83,7 @@ After six weeks, again an updated tool is expected which can produce for any run
 The final deliverable is the final poster (and the presentation thereof) about our work and the tool itself.
 
 ___
-## How to set up environment {#04}
+## How to set up environment
 
 1. Download all files and place in one folder
 2. Create virtual environment .venv in this folder (can be .conda if you want)
@@ -110,6 +111,6 @@ ___
   pip install -r requirements.txt
   ```
 ___
-## How to run the code {#05}
+## How to run the code
 1. Change the path to the original data in the **config.py** file, as well we recommend to slice the data, variable for this is also available in config file. 
 2. Run the **main.py** file. All the progress can be seen in your terminal during the run process.
