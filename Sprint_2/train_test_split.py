@@ -1,16 +1,22 @@
 # imports
-
-import os
-
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
 
 
-def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosed_dataset: str='BPI_Challenge_2017', lags: bool=False):
+def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosen_dataset: str='BPI_Challenge_2017', lags: bool=False):
     """
-    Returns Train part and Test part in mentioned order
-    """
+    This function splits a Pandas DataFrame into train and test sets, based on the 'case:concept:name' column.
+    It also prints information about the resulting train and test sets.
+
+    Parameters:
+        df (Pandas DataFrame): The input DataFrame
+        test_size (float, optional): The proportion of the data set to include in the test set (default=0.2)
+        chosen_dataset (str, optional): The name of the chosen dataset (default='BPI_Challenge_2017')
+        lags (bool, optional): Whether to create lags for the train and test sets (default=False)
+
+    Returns:
+    tuple: A tuple containing the train and test DataFrames
+"""
 
     # Split the DataFrame into train and test sets
     train_df, test_df = train_test_split(df, test_size=test_size, shuffle=False)
@@ -41,6 +47,7 @@ def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosed_datas
     """)
 
     if lags:
+        # Create lags for the train set
         train_df['concept:name - lag_1'] = train_df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
         train_df['concept:name - lag_2'] = train_df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
         train_df['concept:name - lag_3'] = train_df.groupby('case:concept:name')['concept:name'].shift(3).fillna('absent')
@@ -52,11 +59,10 @@ def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosed_datas
         train_df['concept:name - lag_9'] = train_df.groupby('case:concept:name')['concept:name'].shift(9).fillna('absent')
         train_df['concept:name - lag_10'] = train_df.groupby('case:concept:name')['concept:name'].shift(10).fillna('absent')
 
-
-        # define target
+        # Define the target for the train set
         train_df['next concept:name'] = train_df.groupby('case:concept:name')['concept:name'].shift(-1).fillna('END')
 
-        
+        # Create lags for the test set
         test_df['concept:name - lag_1'] = test_df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
         test_df['concept:name - lag_2'] = test_df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
         test_df['concept:name - lag_3'] = test_df.groupby('case:concept:name')['concept:name'].shift(3).fillna('absent')
@@ -68,7 +74,7 @@ def train_test_split_custom(df: pd.DataFrame, test_size: float=0.2, chosed_datas
         test_df['concept:name - lag_9'] = test_df.groupby('case:concept:name')['concept:name'].shift(9).fillna('absent')
         test_df['concept:name - lag_10'] = test_df.groupby('case:concept:name')['concept:name'].shift(10).fillna('absent')
 
-        # define target
+        # Define the target for the test set
         test_df['next concept:name'] = test_df.groupby('case:concept:name')['concept:name'].shift(-1).fillna('END')
 
     return train_df, test_df
