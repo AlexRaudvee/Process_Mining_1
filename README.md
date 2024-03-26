@@ -1,4 +1,4 @@
-# Predictive Process Mining Project {#01}
+# Predictive Process Mining Project
 
 Who has not experienced the situation that you submitted a request into some administrative system (like a reimbursement form, a purchase of a ticket in a webshop, an insurance claim or a request in one of TU/e's administrative systems). How often have you wondered: How long will this request take? 
 
@@ -11,7 +11,7 @@ In general, process prediction techniques can be categorized into local and glob
 ___
 ### Table of Contents
 
-- [Introduction](#01)
+- [Introduction](#Predictive Process Mining Project)
 - [Files Structure](#02)
 - [Data Used](#03)
 - [How Set Up Environment](#04)
