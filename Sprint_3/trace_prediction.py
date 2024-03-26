@@ -62,10 +62,6 @@ X_test = df_test[['concept:name', 'concept:name - lag_1', 'concept:name - lag_2'
 y_train = df_train[['next concept:name']]
 y_test = df_test[['next concept:name']]
 
-print(f"""
-    inputs: {[col for col in X_test.columns]} \n
-    target: {[col for col in y_test.columns]}
-""")
 
 if not os.path.exists('model_weights/random_forest_trace.pkl'):
 
@@ -230,10 +226,6 @@ y_train = df_train['elapsed time:timestamp']
 
 y_test = df_test[['elapsed time:timestamp']]
 
-print(f"""
-    inputs: {[col for col in X_test.columns]} \n
-    target: {[col for col in y_test.columns]}
-""")
 # Define the parameter grid
 
 param_grid = {
