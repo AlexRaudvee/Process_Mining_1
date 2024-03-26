@@ -14,7 +14,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from config import path_to_data_folder, slice_index, chosed_dataset
+from config import path_to_data_folder, slice_index, chosen_dataset
 
 os.makedirs(f'{os.getcwd()}/data', exist_ok=True)
 path_to_data_dick = f'{os.getcwd()}/data'
@@ -24,7 +24,17 @@ custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x
 
 
 def saver(df: pd.DataFrame, path_name: str):
+    """
+    Saves a pandas dataframe to a csv file in chunks.
 
+    Args:
+        df (pd.DataFrame): The dataframe to save.
+        path_name (str): The path and filename of the csv file.
+
+    Returns:
+        None
+
+    """
     chunks = np.array_split(df.index, 100) # split into 100 chunks
 
     for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
@@ -34,6 +44,17 @@ def saver(df: pd.DataFrame, path_name: str):
             df.loc[subset].to_csv(path_name, header=None, mode='a', index=True)
 
 def saver_json(df: pd.DataFrame, path_name: str):
+    """
+    Saves a pandas dataframe to a json file in chunks.
+
+    Args:
+        df (pd.DataFrame): The dataframe to save.
+        path_name (str): The path and filename of the json file.
+
+    Returns:
+        None
+
+    """
     chunks = np.array_split(df.index, 100) # split into 100 chunks
 
     for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
@@ -43,6 +64,16 @@ def saver_json(df: pd.DataFrame, path_name: str):
             df.loc[subset].to_json(path_name, orient='records', lines=True, mode='a')
 
 def print_terminal_width_symbol(symbol):
+    """
+    Prints a symbol repeated for the terminal width.
+
+    Args:
+        symbol (str): The symbol to print.
+
+    Returns:
+        None
+
+    """
     # Get the terminal width
     terminal_width, _ = shutil.get_terminal_size()
 
@@ -50,6 +81,18 @@ def print_terminal_width_symbol(symbol):
     print(symbol * terminal_width)
 
 def print_centered_text(text, symbol=" "):
+    """
+    Prints centered text in the terminal.
+
+    Args:
+        text (str): The text to print.
+        symbol (str, optional): The symbol to print before and after the text.
+            Defaults to a space.
+
+    Returns:
+        None
+
+    """
     # Get the terminal width
     terminal_width, _ = shutil.get_terminal_size()
 
@@ -59,7 +102,6 @@ def print_centered_text(text, symbol=" "):
 
     # Print the symbol and the text with spaces
     print(symbol * num_spaces_before + text + symbol * num_spaces_after)
-
 
 if not os.path.exists(f'{path_to_data_dick}/BPI_Challenge_2012.csv'):
     log_2012 = pm4py.read_xes(f'{path_to_data_folder}/BPI_Challenge_2012.xes.gz')
@@ -79,7 +121,7 @@ if not os.path.exists(f'{path_to_data_dick}/BPI_Challenge_2017.csv'):
     pm4py.view_dotted_chart(log_2017, format="png")
     map_2017 = pm4py.discover_heuristics_net(log_2017)
     pm4py.view_heuristics_net(map_2017)
-   
+
     dataframe_2017 = pm4py.convert_to_dataframe(log_2017)
     print(f"Extracted BPI Challenge 2017.xes.gz\n")
     saver(dataframe_2017, f'{path_to_data_dick}/BPI_Challenge_2017.csv')
@@ -129,10 +171,10 @@ for file_name in file_list:
         else:
             print("Non-numeric values found in case:concept:name:", non_numeric_values)
 
-    # sort the df accroding to the ids
+    # sort the df according to the ids
     df = df.sort_values(by='time:timestamp', ascending=True)
 
-    # remove unnamend column
+    # remove unnamed column
     df = df.drop(columns=['Unnamed: 0'])
 
     # deal with timestamps 
@@ -162,15 +204,15 @@ for file_name in file_list:
         print(f"\n{file_name} is stored in clean format\n")
 
     if file_name == 'Road_Traffic_Fine_Management_Process':
-        df_road_trafic = df
+        df_road_traffic = df
         print(f"{file_name} cleaning is finished\n")
-        saver(df_road_trafic, f"{path_to_data_dick}/clean_Road_Traffic_Fine_Management_Process.csv")
+        saver(df_road_traffic, f"{path_to_data_dick}/clean_Road_Traffic_Fine_Management_Process.csv")
         print(f"\n{file_name} is stored in clean format\n")
 
 
 df_2017_clean = pd.read_csv(f'{path_to_data_dick}/clean_BPI_Challenge_2017.csv')
 df_2012_clean = pd.read_csv(f'{path_to_data_dick}/clean_BPI_Challenge_2012.csv')
-df_road_trafic_clean = pd.read_csv(f'{path_to_data_dick}/clean_Road_Traffic_Fine_Management_Process.csv')
+df_road_traffic_clean = pd.read_csv(f'{path_to_data_dick}/clean_Road_Traffic_Fine_Management_Process.csv', low_memory=False)
 
 df_2017_clean[['start_timestamp', "time:timestamp"]]
 df_2017_clean['timestamp_date'] = pd.to_datetime(df_2017_clean['time:timestamp'])
@@ -180,9 +222,9 @@ df_2012_clean[['start_timestamp', "time:timestamp"]]
 df_2012_clean['timestamp_date'] = pd.to_datetime(df_2012_clean['time:timestamp'])
 df_2012_clean['day_of_the_week'] = df_2012_clean['timestamp_date'].dt.day_name()
 
-df_road_trafic_clean[['start_timestamp', "time:timestamp"]]
-df_road_trafic_clean['timestamp_date'] = pd.to_datetime(df_road_trafic_clean['time:timestamp'])
-df_road_trafic_clean['day_of_the_week'] = df_road_trafic_clean['timestamp_date'].dt.day_name()
+df_road_traffic_clean[['start_timestamp', "time:timestamp"]]
+df_road_traffic_clean['timestamp_date'] = pd.to_datetime(df_road_traffic_clean['time:timestamp'])
+df_road_traffic_clean['day_of_the_week'] = df_road_traffic_clean['timestamp_date'].dt.day_name()
 
 
 df_2017_clean['day_of_the_week']
@@ -203,20 +245,20 @@ for i in df_2012_clean['day_of_the_week']:
         weekday_list.append(0)
 df_2012_clean['Weekday'] = weekday_list
 
-df_road_trafic_clean['day_of_the_week']
+df_road_traffic_clean['day_of_the_week']
 weekday_list = []
-for i in df_road_trafic_clean['day_of_the_week']:
+for i in df_road_traffic_clean['day_of_the_week']:
     if i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
         weekday_list.append(1)
     else:
         weekday_list.append(0)
-df_road_trafic_clean['Weekday'] = weekday_list
+df_road_traffic_clean['Weekday'] = weekday_list
 
 
 # Add a new column indicating if the timestamp is within the specified time range
 df_2017_clean['working_hours'] = ((df_2017_clean['timestamp_date'].dt.time >= pd.to_datetime('09:30').time()) & (df_2017_clean['timestamp_date'].dt.time <= pd.to_datetime('16:30').time())).astype(int)
 df_2012_clean['working_hours'] = ((df_2012_clean['timestamp_date'].dt.time >= pd.to_datetime('09:30').time()) & (df_2012_clean['timestamp_date'].dt.time <= pd.to_datetime('16:30').time())).astype(int)
-df_road_trafic_clean['working_hours'] = ((df_road_trafic_clean['timestamp_date'].dt.time >= pd.to_datetime('09:30').time()) & (df_road_trafic_clean['timestamp_date'].dt.time <= pd.to_datetime('16:30').time())).astype(int)
+df_road_traffic_clean['working_hours'] = ((df_road_traffic_clean['timestamp_date'].dt.time >= pd.to_datetime('09:30').time()) & (df_road_traffic_clean['timestamp_date'].dt.time <= pd.to_datetime('16:30').time())).astype(int)
 
 vacation_days = [
     pd.Timestamp('2016-01-01'), pd.Timestamp('2016-01-06'), pd.Timestamp('2016-02-07'),
@@ -298,7 +340,7 @@ for file_name in file_list:
 
     if file_name == 'Road_Traffic_Fine_Management_Process':
         print(f"{file_name} is finished\n")
-        saver(df_road_trafic_clean, f"{path_to_data_dick}/clean_Road_Traffic_Fine_Management_Process.csv")
+        saver(df_road_traffic_clean, f"{path_to_data_dick}/clean_Road_Traffic_Fine_Management_Process.csv")
         print(f"\n{file_name} is stored in clean format with features\n")
 
 
@@ -310,7 +352,7 @@ print("\n")
         
 df_2012_clean['time_difference'] = [pd.to_timedelta(td).total_seconds() for td in df_2012_clean['timestamp_difference']]
 df_2017_clean['time_difference'] = [pd.to_timedelta(td).total_seconds() for td in df_2017_clean['timestamp_difference']]
-df_road_trafic_clean['time_difference'] = [pd.to_timedelta(td).total_seconds() for td in df_road_trafic_clean['timestamp_difference']]
+df_road_traffic_clean['time_difference'] = [pd.to_timedelta(td).total_seconds() for td in df_road_traffic_clean['timestamp_difference']]
 
 for file_name in file_list:
     if file_name == 'BPI_Challenge_2012':
@@ -364,7 +406,7 @@ for file_name in file_list:
         plt.show()
     
     if file_name == 'Road_Traffic_Fine_Management_Process':
-        pivot_df_2 = df_road_trafic_clean.pivot_table(index='concept:name', columns='Weekday', values='time_difference', aggfunc='mean')
+        pivot_df_2 = df_road_traffic_clean.pivot_table(index='concept:name', columns='Weekday', values='time_difference', aggfunc='mean')
         pivot_df_2.plot(kind='bar', figsize=(10, 6))
         plt.title('Mean Time Difference per Concept Name and Weekday')
         plt.xlabel('Concept Name')
@@ -401,7 +443,7 @@ for file_name in file_list:
         plt.show()
     
     if file_name == 'Road_Traffic_Fine_Management_Process':
-        pivot_df_3 = df_road_trafic_clean.pivot_table(index='concept:name', columns='working_hours', values='time_difference', aggfunc='mean')
+        pivot_df_3 = df_road_traffic_clean.pivot_table(index='concept:name', columns='working_hours', values='time_difference', aggfunc='mean')
         pivot_df_3.plot(kind='bar', figsize=(10, 6))
         plt.title('Mean Time Difference per Concept Name and working hours')
         plt.xlabel('Concept Name')  
@@ -415,7 +457,7 @@ for file_name in file_list:
 
 df_2012_clean_sequence = df_2012_clean
 df_2017_clean_sequence = df_2017_clean
-df_road_trafic_clean_sequence = df_road_trafic_clean
+df_road_traffic_clean_sequence = df_road_traffic_clean
 
 for file_name in file_list:
     if file_name == 'BPI_Challenge_2012':
@@ -447,7 +489,7 @@ for file_name in file_list:
         plt.show()
 
     if file_name == 'Road_Traffic_Fine_Management_Process':
-        last_concept_per_group = df_road_trafic_clean_sequence.groupby('case:concept:name')['concept:name'].last().reset_index(name='last_concept')
+        last_concept_per_group = df_road_traffic_clean_sequence.groupby('case:concept:name')['concept:name'].last().reset_index(name='last_concept')
         #Count the frequency of each 'concept:name' being the last in its group
         last_concept_freq = last_concept_per_group['last_concept'].value_counts()
         plt.figure(figsize=(10, 6))
@@ -494,9 +536,9 @@ for file_name in file_list:
         plt.show()
 
     if file_name == 'Road_Traffic_Fine_Management_Process':
-        mean_requested_amount_per_group = df_road_trafic_clean_sequence.groupby('case:concept:name')['totalPaymentAmount'].mean().reset_index(name='mean_requested_amount')
+        mean_requested_amount_per_group = df_road_traffic_clean_sequence.groupby('case:concept:name')['totalPaymentAmount'].mean().reset_index(name='mean_requested_amount')
         # Group the data by 'case:concept:name' and get the last concept of each sequence
-        last_concept_per_group = df_road_trafic_clean_sequence.groupby('case:concept:name')['concept:name'].last().reset_index(name='last_concept')
+        last_concept_per_group = df_road_traffic_clean_sequence.groupby('case:concept:name')['concept:name'].last().reset_index(name='last_concept')
         # Merge the mean requested amount data with the last concept data
         df_merged = pd.merge(last_concept_per_group, mean_requested_amount_per_group, on='case:concept:name')
         # Create a scatter plot to visualize the relationship between the requested amount and the last concept of the sequence
@@ -531,15 +573,15 @@ print('\n')
 print_centered_text("EXTRACTION OF TRACES AND SAVING THEM FOR THE MODEL")
 
 
-dataframe_train = pd.read_csv(f'data/{chosed_dataset}.csv')
+dataframe_train = pd.read_csv(f'data/{chosen_dataset}.csv')
 
 dataframe_train = pm4py.format_dataframe(dataframe_train, case_id='case:concept:name', activity_key='concept:name', timestamp_key='time:timestamp')
 
 event_log_train = pm4py.convert_to_event_log(dataframe_train)
     
-pm4py.write_xes(event_log_train, f'data/event_log_{chosed_dataset}.xes')
+pm4py.write_xes(event_log_train, f'data/event_log_{chosen_dataset}.xes')
 
-event_logs_files_names = [f'event_log_{chosed_dataset}']
+event_logs_files_names = [f'event_log_{chosen_dataset}']
 
 for event_log_file in event_logs_files_names:
 
@@ -564,8 +606,10 @@ for event_log_file in event_logs_files_names:
 
     df_final = pd.DataFrame({'case:concept:name': [df.name for df in trace_df_list], 'trace': trace_df_list})
 
-    df_final.to_json(f'data/traces_{event_log_file}.json', orient='records')
+    df_final.to_json(f'data/traces_{chosen_dataset}.json', orient='records')
 
     if os.path.exists(f'data/{event_log_file}.xes'):
         # Remove the file
         os.remove(f'data/{event_log_file}.xes')
+
+print(f'Traces are extracted and saved in the data folder')
