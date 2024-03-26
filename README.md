@@ -14,9 +14,9 @@ ___
 
 - [Introduction](#introduction)
 - [Files Structure](#Files)
-- [Data Used](#TheData)
-- [How Set Up Environment](#How_to_set_up_environment)
-- [How Run The Code](#How_to_run_the_code)
+- [Data Used](#The-Data)
+- [How Set Up Environment](#How-to-set-up-environment)
+- [How Run The Code](#How-to-run-the-code)
 ___
 ## The Challenge 
 
