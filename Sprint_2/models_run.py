@@ -1,5 +1,4 @@
 import pickle
-import joblib
 import os 
 import sys
 
@@ -10,24 +9,20 @@ import seaborn as sns
 import networkx as nx
 
 from tqdm import tqdm
-from numpy import mean, std
-from joblib import dump, load
+from joblib import dump
 from train_test_split import train_test_split_custom
-from datetime import timedelta
 from xgboost import XGBRegressor
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import mutual_info_regression
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, mean_absolute_error
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import GridSearchCV, KFold
-from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder, Normalizer
+from sklearn.preprocessing import LabelEncoder
 
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from config import path_to_data_folder, slice_index, chosed_dataset
+from config import path_to_data_folder, slice_index, chosen_dataset
+from Sprint_1.cleaning_feature_extraction import print_centered_text, print_terminal_width_symbol
 
 # functions for outputs
 custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
@@ -43,7 +38,7 @@ def saver(df: pd.DataFrame, path_name: str):
             df.loc[subset].to_csv(path_name, header=None, mode='a', index=True)
 
 ### NAIVE MODEL CODE
-df = pd.read_csv(f'data/clean_{chosed_dataset}.csv')[:slice_index]
+df = pd.read_csv(f'data/clean_{chosen_dataset}.csv')[:slice_index]
 
 activity_counts = df['concept:name'].value_counts()
 
@@ -187,19 +182,22 @@ df['next concept:name naive'] = df.groupby('case:concept:name')['next concept:na
 df = df.drop(columns=['column_similarity_percentage', 'predicted_start_time', 'elapsed_time_from_start', 'time_to_next_event_seconds', 'event_seq', 'A', 'O', 'W', 'prefix'], errors='ignore')
 
 # save to the csv 
-saver(df, f'data/{chosed_dataset}_naive.csv')
+saver(df, f'data/{chosen_dataset}_naive.csv')
 
+print_terminal_width_symbol(symbol='#')
+print('\n')
+print_centered_text("METRICS FOR BASELINE MODE")
+print('\n')
 print(f"""
-    ################################## METRICS FOR BASELINE MODEL ##################################\n
         Metrics for Baseline model (Naive Model):\n
         Accuracy for next event prediction: {accuracy}% \n
-        R\u00B2 of time prediction for next event: {r2_time}\n
-    ################################################################################################\n
+        R\u00B2 of time prediction for next event: {r2_time}\n  
 """)
+print_terminal_width_symbol(symbol='#')
 
 
 # extract the 1-10 lags
-df = pd.read_csv(f'data/{chosed_dataset}_naive.csv')
+df = pd.read_csv(f'data/{chosen_dataset}_naive.csv')
 
 df['concept:name - lag_1'] = df.groupby('case:concept:name')['concept:name'].shift(1).fillna('absent')
 df['concept:name - lag_2'] = df.groupby('case:concept:name')['concept:name'].shift(2).fillna('absent')
@@ -288,9 +286,9 @@ df['next concept:name rfc'] = label_encoder.inverse_transform(best_model.predict
 for column in columns:
         df[column] = label_encoders[column].inverse_transform(df[column])
 
-saver(df, f'data/{chosed_dataset}_rfc_xgboost.csv')
+saver(df, f'data/{chosen_dataset}_rfc_xgboost.csv')
 
-df = pd.read_csv(f'data/{chosed_dataset}_rfc_xgboost.csv')
+df = pd.read_csv(f'data/{chosen_dataset}_rfc_xgboost.csv')
 
 # counting elapsed time
 df['elapsed time:timestamp'] = df['time:timestamp diff'].shift(-1) 
@@ -493,14 +491,16 @@ for column in df.columns:
     else:
         continue 
 
-saver(df, f'data/{chosed_dataset}_rfc_xgboost.csv')
+saver(df, f'data/{chosen_dataset}_rfc_xgboost.csv')
 
-
+print_terminal_width_symbol('#')
+print('\n')
+print_centered_text('MODELS RESULTS')
+print('\n')
 print(f"""
-    ######################################## MODELS RESULTS ########################################\n
       Next Event Prediction Accuracy (Random Forest Classifier):  {rfc_score}\n
       Next Time Prediction R\u00B2 score (XGBoost Regressor): {r2_score_value}\n
       RMSE Time Prediction (XGBoost): {rmse_test} in seconds\n
       MAE Time Prediction (XGBoost): {mae_test} in seconds\n
-    ################################################################################################\n
 """)
+print_terminal_width_symbol('#')
