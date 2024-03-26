@@ -192,9 +192,9 @@ print('\n')
 print_centered_text("METRICS FOR BASELINE MODEL (NAIVE)")
 print('\n')
 print(f"""
-        Accuracy for next event prediction: {accuracy}% \n
-        R\u00B2 of time prediction for next event: {r2_time}\n  
-        MAE of time prediction for next event: {mae_time} \n
+        Accuracy Next Event Prediction (Naive): {accuracy}% \n
+        R\u00B2 of Time Prediction (Naive): {r2_time}\n  
+        MAE Time Prediction (Naive): {mae_time} \n
 """)
 print_terminal_width_symbol(symbol='#')
 
