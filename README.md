@@ -7,29 +7,39 @@ In this Project, we look at this problem from a process mining perspective. We u
 This prediction model is to be developed using Python using whatever data analysis techniques the members in this group think of.
 
 In general, process prediction techniques can be categorized into local and global techniques. Local techniques use information from the current case (for example the insurance claim) only to base the prediction on. Global techniques use all available information, such as for example the load of the system or even today's weather in their predictions. 
-
-## The Challenge
+___
+## The Challenge 
 
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
+___
 
- Files
+## Files
+
+All files are stored in the following way:
+- **Sprint 1 folder** - files being written in the first sprint
+- **Sprint 2 folder** - files being written in the second sprint
+- **Sprint 3 folder** - files being written in the third sprint
 
 - **requirements.txt** - this file includes all required libraries that you need to have to run the code.
-- **advanced_models_2012_2017.ipynb.ipynb** - here you can find the additional things for extracting the data from naive model.
-- **data_cleaning_2012_2017.ipynb** - this file shows how the cleaning of the data were done before applying the naive model and some of the visualizations
-- **naive_model.ipynb** - this file represents the testing of the naive model, and small visualizations of dataset including the evaluation of the model for 'BPI_Challenge_2017'.
-- **train_test_sep.ipynb** - this is for splitting the training and testing data with the ratio 8:2 for 'BPI_Challenge_2017'.
-- **cleaning_feature_extraction.py** - this file includes some of the cleaning methods and find out the feature extactions for 'BPI_Challenge_2017', 'BPI Challenge 2012' and 'Italian Road fines data'.
-- **data_exp_vis.ipynb** - this file includes the first visualizations for the first and primary data exploration
-- **visualizations.ipynb** and **visualization.ipynb** - in these files you can find all the main visualizatons that were done for the sprints.
-- **data_cleaning_2012_2017_start.ipynb** - in this file, using the cleaned dataset for 2017, and making some visualizations about 'concept: name'.
-- **models_run.py** - this file is for the models results about naive model, XGBoost and RFC.
-- **modesl_train_xgboost_rfc.ipynb** - this file is using train and testing splitting datasets to get the models results about XGBoost and RFC.
-- **pm4py_work.ipynb** - this file is for finding the process tress about 'BPI_Challenge_2017'.
-- **traces_extraction.ipynb** - this file finds the actual traces based on 'case: concept: name' with 'BPI_Challenge_2017' dataset.
-- **train_test_split.py** - this file is for the functions of how to split the train and test dataset.
+- **config.py** - this file includes global variables that you have to configure for your local environment
+- **main.py** - this file you have to run to run the whole program
 
+- **Sprint 1 folder** :
+   - **cleaning_feature_extraction.py** - this file includes the whole code for cleaning of the data, extraction of features from the data and at the same time saving all the data in the data folder in your environment
+   - **data_exp_vis.ipynb** - visualizations of the extracted data
+   - **train_test_sep.ipynb** - code for demo representation of how the train and test separations is done 
+   - **visualizations.ipynb** - visualizations of the data
 
+- **Sprint 2 folder** :
+   - **models_run.py** - file which runs and assembles the models 
+   - **train_test_split.py** - file with train test split function which is used during the project
+   - **pm4py_work.ipynb** - file used for extra visualizations of the log files
+   - **visualizations.ipynb** - file with visualizations for sprint 2
+
+- **Sprint 3 folder**:
+   - **trace_prediction.py** - file for running and assembling the recurrent model that predicts the traces
+   - **traces_Seq2Seq.ipynb** - file with seq2seq model but weren't used in the project due to high complexity of the model and computational difficulties.
+___
 ## The Data
 
 The dataset for which we would like to predict the next event and time until next event can be any of the following datasets (in order of complexity):
@@ -41,12 +51,13 @@ The dataset for which we would like to predict the next event and time until nex
 
 To test and train our method, we are going to use synthetic datasets found [here](https://data.4tu.nl/search?q=:keyword:%20%22real%20life%20event%20logs%22)
 
+___
 ## The datasets that mainly use in the explorations.
-- **data_cleaning_2012_2017.ipynb**: running this for the 'clean_BPI_Challenge_2017'
-- **train_test_sep.ipynb**: using 'clean_BPI_Challenge_2012' as input dataset to get 3 separate files, testing, training and the merged dataset.
+   Mainly most of the focus is put on the BPI_Challenge_2017, but the same time the work is not hard coded, and can be used for BPI_Challenge_2012 as well and for Traffic dataset at the same time. 
+   Main assumption is that in the dataset we have columns like case:concept:name, concept:name and time:timestamp.
 
-
-## The Delivarables 
+___
+## The Deliverables  
 
 A rough schedule for the sprint deliverables is as follows:
 
@@ -62,10 +73,11 @@ After six weeks, again an updated tool is expected which can produce for any run
 
 The final deliverable is the final poster (and the presentation thereof) about our work and the tool itself.
 
-## How to set up enviorment
+___
+## How to set up environment
 
 1. Download all files and place in one folder
-2. Create virtual envioremnt .venv in this folder (can be .conda if you want)
+2. Create virtual environment .venv in this folder (can be .conda if you want)
    
    For windows:
    ```python
@@ -75,9 +87,9 @@ The final deliverable is the final poster (and the presentation thereof) about o
    ```python
    python3 -m venv .venv
    ```
-3. Activate the virtual enviroment
+3. Activate the virtual environment
    
-   For Windovs:
+   For Widows:
    ```python
    myenv\Scripts\activate
    ```
@@ -89,4 +101,7 @@ The final deliverable is the final poster (and the presentation thereof) about o
   ```python
   pip install -r requirements.txt
   ```
-
+___
+## How to run the code
+1. Change the path to the original data in the **config.py** file, as well we recommend to slice the data, variable for this is also available in config file. 
+2. Run the **main.py** file. All the progress can be seen in your terminal during the run process.
