@@ -169,6 +169,9 @@ accuracy = df['column_similarity_percentage'].loc[0]
 # r2 for time prediction
 r2_time = r2_score(df['time_to_next_event_seconds'], df['predicted_time_to_next_event_seconds'])
 
+# compute the mean absolute error for time prediction
+mae_time = mean_absolute_error(df['time_to_next_event_seconds'], df['predicted_time_to_next_event_seconds'])
+
 # rename columns with predictions
 df = df.rename(columns={'predicted_step': 'next concept:name naive', 'predicted_time_to_next_event_seconds': 'next time:timestamp naive', 'time_to_next_event': 'next time:timestamp', 'timestamp_difference': 'time:timestamp diff'}, errors='ignore')
 
@@ -186,12 +189,12 @@ saver(df, f'data/{chosen_dataset}_naive.csv')
 
 print_terminal_width_symbol(symbol='#')
 print('\n')
-print_centered_text("METRICS FOR BASELINE MODE")
+print_centered_text("METRICS FOR BASELINE MODEL (NAIVE)")
 print('\n')
 print(f"""
-        Metrics for Baseline model (Naive Model):\n
         Accuracy for next event prediction: {accuracy}% \n
         R\u00B2 of time prediction for next event: {r2_time}\n  
+        MAE of time prediction for next event: {mae_time} \n
 """)
 print_terminal_width_symbol(symbol='#')
 
