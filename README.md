@@ -1,4 +1,4 @@
-# Predictive Process Mining Project
+# Predictive Process Mining Project {#01}
 
 Who has not experienced the situation that you submitted a request into some administrative system (like a reimbursement form, a purchase of a ticket in a webshop, an insurance claim or a request in one of TU/e's administrative systems). How often have you wondered: How long will this request take? 
 
@@ -7,13 +7,22 @@ In this Project, we look at this problem from a process mining perspective. We u
 This prediction model is to be developed using Python using whatever data analysis techniques the members in this group think of.
 
 In general, process prediction techniques can be categorized into local and global techniques. Local techniques use information from the current case (for example the insurance claim) only to base the prediction on. Global techniques use all available information, such as for example the load of the system or even today's weather in their predictions. 
+
+___
+### Table of Contents
+
+- [Introduction](#01)
+- [Files Structure](#02)
+- [Data Used](#03)
+- [How Set Up Environment](#04)
+- [How Run The Code](#05)
 ___
 ## The Challenge 
 
 The challenge in this project is to not only develop a tool to do the predictions, but to also carefully think about the context in which these predictions are made and the implications that this has for feature selection and quantitative and qualitative evaluation of the prediction results. There are some essential differences between process mining and regular data mining activities and these will become apparent over this project.
 ___
 
-## Files
+## Files {#02}
 
 All files are stored in the following way:
 - **Sprint 1 folder** - files being written in the first sprint
@@ -40,7 +49,7 @@ All files are stored in the following way:
    - **trace_prediction.py** - file for running and assembling the recurrent model that predicts the traces
    - **traces_Seq2Seq.ipynb** - file with seq2seq model but weren't used in the project due to high complexity of the model and computational difficulties.
 ___
-## The Data
+## The Data {#03}
 
 The dataset for which we would like to predict the next event and time until next event can be any of the following datasets (in order of complexity):
 
@@ -49,10 +58,9 @@ The dataset for which we would like to predict the next event and time until nex
 - BPI Challenge 2017: [can be found here](https://doi.org/10.4121/uuid:5f3067df-f10b-45da-b98b-86ae4c7a310b)
 - BPI Challenge 2018: [can be found here](https://doi.org/10.4121/uuid:3301445f-95e8-4ff0-98a4-901f1f204972)
 
-To test and train our method, we are going to use synthetic datasets found [here](https://data.4tu.nl/search?q=:keyword:%20%22real%20life%20event%20logs%22)
 
 ___
-## The datasets that mainly use in the explorations.
+## Main Datasets for Exploration
    Mainly most of the focus is put on the BPI_Challenge_2017, but the same time the work is not hard coded, and can be used for BPI_Challenge_2012 as well and for Traffic dataset at the same time. 
    Main assumption is that in the dataset we have columns like case:concept:name, concept:name and time:timestamp.
 
@@ -74,7 +82,7 @@ After six weeks, again an updated tool is expected which can produce for any run
 The final deliverable is the final poster (and the presentation thereof) about our work and the tool itself.
 
 ___
-## How to set up environment
+## How to set up environment {#04}
 
 1. Download all files and place in one folder
 2. Create virtual environment .venv in this folder (can be .conda if you want)
@@ -102,6 +110,6 @@ ___
   pip install -r requirements.txt
   ```
 ___
-## How to run the code
+## How to run the code {#05}
 1. Change the path to the original data in the **config.py** file, as well we recommend to slice the data, variable for this is also available in config file. 
 2. Run the **main.py** file. All the progress can be seen in your terminal during the run process.
