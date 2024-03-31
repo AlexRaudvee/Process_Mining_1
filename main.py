@@ -3,7 +3,7 @@ import subprocess
 # Call cleaning_feature_extraction.py 
 subprocess.run(['python', 'Sprint_1/cleaning_feature_extraction.py'])
 """
-This file is going to convert xrs in csv files and with primary filtering and cleaning.
+This file is going to convert xes in csv files and with primary filtering and cleaning.
 In addition, it will extract the traces from the csv files.
 """
 

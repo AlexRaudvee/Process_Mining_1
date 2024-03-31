@@ -1,9 +1,7 @@
 import pm4py
 import os
 import sys 
-import shutil
 
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -14,7 +12,10 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
+from func import saver, print_centered_text, print_terminal_width_symbol
 from config import path_to_data_folder, slice_index, chosen_dataset
+
+custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
 
 # data folder creation
 os.makedirs(f'{os.getcwd()}/data', exist_ok=True)
@@ -23,90 +24,6 @@ path_to_data_dick = f'{os.getcwd()}/data'
 # artifacts folder creation
 os.makedirs(f'{os.getcwd()}/artifacts_exp', exist_ok=True)
 path_to_artifacts = f'{os.getcwd()}/artifacts_exp'
-
-
-custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
-
-
-def saver(df: pd.DataFrame, path_name: str):
-    """
-    Saves a pandas dataframe to a csv file in chunks.
-
-    Args:
-        df (pd.DataFrame): The dataframe to save.
-        path_name (str): The path and filename of the csv file.
-
-    Returns:
-        None
-
-    """
-    chunks = np.array_split(df.index, 100) # split into 100 chunks
-
-    for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
-        if chunck == 0: # first row
-            df.loc[subset].to_csv(path_name, mode='w', index=True)
-        else:
-            df.loc[subset].to_csv(path_name, header=None, mode='a', index=True)
-
-def saver_json(df: pd.DataFrame, path_name: str):
-    """
-    Saves a pandas dataframe to a json file in chunks.
-
-    Args:
-        df (pd.DataFrame): The dataframe to save.
-        path_name (str): The path and filename of the json file.
-
-    Returns:
-        None
-
-    """
-    chunks = np.array_split(df.index, 100) # split into 100 chunks
-
-    for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
-        if chunck == 0:  # first chunk
-            df.loc[subset].to_json(path_name, orient='records')
-        else:
-            df.loc[subset].to_json(path_name, orient='records', lines=True, mode='a')
-
-def print_terminal_width_symbol(symbol):
-    """
-    Prints a symbol repeated for the terminal width.
-
-    Args:
-        symbol (str): The symbol to print.
-
-    Returns:
-        None
-
-    """
-    # Get the terminal width
-    terminal_width, _ = shutil.get_terminal_size()
-
-    # Print the symbol repeated for the terminal width on a single line
-    print(symbol * terminal_width)
-
-def print_centered_text(text, symbol=" "):
-    """
-    Prints centered text in the terminal.
-
-    Args:
-        text (str): The text to print.
-        symbol (str, optional): The symbol to print before and after the text.
-            Defaults to a space.
-
-    Returns:
-        None
-
-    """
-    # Get the terminal width
-    terminal_width, _ = shutil.get_terminal_size()
-
-    # Calculate the number of spaces before and after the text
-    num_spaces_before = (terminal_width - len(text)) // 2
-    num_spaces_after = terminal_width - len(text) - num_spaces_before
-
-    # Print the symbol and the text with spaces
-    print(symbol * num_spaces_before + text + symbol * num_spaces_after)
 
 if not os.path.exists(f'{path_to_data_dick}/BPI_Challenge_2012.csv'):
     log_2012 = pm4py.read_xes(f'{path_to_data_folder}/BPI_Challenge_2012.xes.gz')
@@ -577,44 +494,44 @@ print_terminal_width_symbol('#')
 print('\n')
 print_centered_text("EXTRACTION OF TRACES AND SAVING THEM FOR THE MODEL")
 
+if not os.path.exists(f'data/traces_{chosen_dataset}.json'):
+    dataframe_train = pd.read_csv(f'data/{chosen_dataset}.csv')
 
-dataframe_train = pd.read_csv(f'data/{chosen_dataset}.csv')
+    dataframe_train = pm4py.format_dataframe(dataframe_train, case_id='case:concept:name', activity_key='concept:name', timestamp_key='time:timestamp')
 
-dataframe_train = pm4py.format_dataframe(dataframe_train, case_id='case:concept:name', activity_key='concept:name', timestamp_key='time:timestamp')
-
-event_log_train = pm4py.convert_to_event_log(dataframe_train)
-    
-pm4py.write_xes(event_log_train, f'data/event_log_{chosen_dataset}.xes')
-
-event_logs_files_names = [f'event_log_{chosen_dataset}']
-
-for event_log_file in event_logs_files_names:
-
-    log = pm4py.read_xes(os.path.join(f"data/{event_log_file}.xes"))
-    log = pm4py.convert_to_event_log(log)
-
-    trace_df_list = []
-    for trace in log:
-        case_concept_name = trace.attributes['concept:name']
-        concept_name_col = []
-        timestamp_col = []
+    event_log_train = pm4py.convert_to_event_log(dataframe_train)
         
-        for event in trace:
-            concept_name_col.append(event['concept:name'])
-            timestamp_col.append(str(event['time:timestamp']))
-        
-        df_trace = pd.DataFrame({'concept:name': concept_name_col, 'time:timestamp': timestamp_col})
-        df_trace = pd.concat([df_trace, pd.DataFrame({'concept:name': ['END'], 'time:timestamp': [timestamp_col[-1]]})], ignore_index=True)
-        df_trace.name = f'{case_concept_name}'
+    pm4py.write_xes(event_log_train, f'data/event_log_{chosen_dataset}.xes')
 
-        trace_df_list.append(df_trace)
+    event_logs_files_names = [f'event_log_{chosen_dataset}']
 
-    df_final = pd.DataFrame({'case:concept:name': [df.name for df in trace_df_list], 'trace': trace_df_list})
+    for event_log_file in event_logs_files_names:
 
-    df_final.to_json(f'data/traces_{chosen_dataset}.json', orient='records')
+        log = pm4py.read_xes(os.path.join(f"data/{event_log_file}.xes"))
+        log = pm4py.convert_to_event_log(log)
 
-    if os.path.exists(f'data/{event_log_file}.xes'):
-        # Remove the file
-        os.remove(f'data/{event_log_file}.xes')
+        trace_df_list = []
+        for trace in tqdm(log, desc="Processing traces", dynamic_ncols=True, bar_format=custom_format, ascii=' -'):
+            case_concept_name = trace.attributes['concept:name']
+            concept_name_col = []
+            timestamp_col = []
+            
+            for event in trace:
+                concept_name_col.append(event['concept:name'])
+                timestamp_col.append(str(event['time:timestamp']))
+            
+            df_trace = pd.DataFrame({'concept:name': concept_name_col, 'time:timestamp': timestamp_col})
+            df_trace = pd.concat([df_trace, pd.DataFrame({'concept:name': ['END'], 'time:timestamp': [timestamp_col[-1]]})], ignore_index=True)
+            df_trace.name = f'{case_concept_name}'
+
+            trace_df_list.append(df_trace)
+
+        df_final = pd.DataFrame({'case:concept:name': [df.name for df in trace_df_list], 'trace': trace_df_list})
+
+        df_final.to_json(f'data/traces_{chosen_dataset}.json', orient='records')
+
+        if os.path.exists(f'data/{event_log_file}.xes'):
+            # Remove the file
+            os.remove(f'data/{event_log_file}.xes')
 
 print(f'Traces are extracted and saved in the data folder')

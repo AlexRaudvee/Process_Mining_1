@@ -24,7 +24,7 @@ df = pd.read_csv(f'data/BPI_Challenge_2017_rfc_xgboost.csv')[:500000]
 
 events_types = df['next concept:name'].unique()
 
-df_traces = pd.read_json(f'data/traces_event_log_{chosen_dataset}.json').tail(slice_traces)
+df_traces = pd.read_json(f'data/traces_{chosen_dataset}.json').tail(slice_traces)
 
 # encoding of the events
 label_encoder = LabelEncoder()

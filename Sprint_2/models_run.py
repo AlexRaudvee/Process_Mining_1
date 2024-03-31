@@ -22,7 +22,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from config import path_to_data_folder, slice_index, chosen_dataset
-from Sprint_1.cleaning_feature_extraction import print_centered_text, print_terminal_width_symbol
+from Sprint_1.func import print_centered_text, print_terminal_width_symbol, saver
 
 # artifacts folder creation
 os.makedirs(f'{os.getcwd()}/artifacts_models', exist_ok=True)
@@ -30,16 +30,6 @@ path_to_artifacts = f'{os.getcwd()}/artifacts_models'
 
 # functions for outputs
 custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
-
-def saver(df: pd.DataFrame, path_name: str):
-
-    chunks = np.array_split(df.index, 100) # split into 100 chunks
-
-    for chunck, subset in enumerate(tqdm(chunks, desc=f"Storing of data ", dynamic_ncols=True, bar_format=custom_format, ascii=' -')):
-        if chunck == 0: # first row
-            df.loc[subset].to_csv(path_name, mode='w', index=True)
-        else:
-            df.loc[subset].to_csv(path_name, header=None, mode='a', index=True)
 
 ### NAIVE MODEL CODE
 df = pd.read_csv(f'data/clean_{chosen_dataset}.csv')[:slice_index]
@@ -122,6 +112,8 @@ nx.draw_networkx_labels(G, pos, font_size=5, font_family="sans-serif")
 plt.title("Network Graph of Process Activities")
 plt.axis("off")  # Turn off the axis
 plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
+
+print_terminal_width_symbol('#')
 
 df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
 
