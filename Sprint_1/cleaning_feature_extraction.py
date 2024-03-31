@@ -16,8 +16,13 @@ sys.path.append(parent)
 
 from config import path_to_data_folder, slice_index, chosen_dataset
 
+# data folder creation
 os.makedirs(f'{os.getcwd()}/data', exist_ok=True)
 path_to_data_dick = f'{os.getcwd()}/data'
+
+# artifacts folder creation
+os.makedirs(f'{os.getcwd()}/artifacts_exp', exist_ok=True)
+path_to_artifacts = f'{os.getcwd()}/artifacts_exp'
 
 
 custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
@@ -365,7 +370,7 @@ for file_name in file_list:
         plt.legend(title='Vacation Day', labels=['Not Vacation', 'Vacation'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'BPI_Challenge_2017':
         pivot_df = df_2017_clean.pivot_table(index='concept:name', columns='vacation_day', values='time_difference', aggfunc='mean')
@@ -377,7 +382,7 @@ for file_name in file_list:
         plt.legend(title='Vacation Day', labels=['Not Vacation', 'Vacation'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 
 for file_name in file_list:
@@ -391,7 +396,7 @@ for file_name in file_list:
         plt.legend(title='Week Day', labels=['Not a Weekday', 'Weekday'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'BPI_Challenge_2017':
         pivot_df_2 = df_2017_clean.pivot_table(index='concept:name', columns='Weekday', values='time_difference', aggfunc='mean')
@@ -403,7 +408,7 @@ for file_name in file_list:
         plt.legend(title='Week Day', labels=['Not a Weekday', 'Weekday'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
     
     if file_name == 'Road_Traffic_Fine_Management_Process':
         pivot_df_2 = df_road_traffic_clean.pivot_table(index='concept:name', columns='Weekday', values='time_difference', aggfunc='mean')
@@ -415,7 +420,7 @@ for file_name in file_list:
         plt.legend(title='Week Day', labels=['Not a Weekday', 'Weekday'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 for file_name in file_list:
     if file_name == 'BPI_Challenge_2012':
@@ -428,7 +433,7 @@ for file_name in file_list:
         plt.legend(title='Working Hours', labels=['Not working hours', 'working hours'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'BPI_Challenge_2017':
         pivot_df_3 = df_2017_clean.pivot_table(index='concept:name', columns='working_hours', values='time_difference', aggfunc='mean')
@@ -440,7 +445,7 @@ for file_name in file_list:
         plt.legend(title='Working Hours', labels=['Not working hours', 'working hours'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
     
     if file_name == 'Road_Traffic_Fine_Management_Process':
         pivot_df_3 = df_road_traffic_clean.pivot_table(index='concept:name', columns='working_hours', values='time_difference', aggfunc='mean')
@@ -452,7 +457,7 @@ for file_name in file_list:
         plt.legend(title='Working Hours', labels=['Not working hours', 'working hours'])
         plt.grid(True)
         plt.yscale('log')  # Set y-axis to log scale
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 
 df_2012_clean_sequence = df_2012_clean
@@ -472,7 +477,7 @@ for file_name in file_list:
         plt.ylabel('Frequency (log scale)')
         plt.xticks(rotation=45, ha='right')
         plt.grid(axis='y')
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'BPI_Challenge_2017':
         last_concept_per_group = df_2017_clean_sequence.groupby('case:concept:name')['concept:name'].last().reset_index(name='last_concept')
@@ -486,7 +491,7 @@ for file_name in file_list:
         plt.ylabel('Frequency (log scale)')
         plt.xticks(rotation=45, ha='right')
         plt.grid(axis='y')
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'Road_Traffic_Fine_Management_Process':
         last_concept_per_group = df_road_traffic_clean_sequence.groupby('case:concept:name')['concept:name'].last().reset_index(name='last_concept')
@@ -500,7 +505,7 @@ for file_name in file_list:
         plt.ylabel('Frequency (log scale)')
         plt.xticks(rotation=45, ha='right')
         plt.grid(axis='y')
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 for file_name in file_list:
     if file_name == 'BPI_Challenge_2012':
@@ -517,7 +522,7 @@ for file_name in file_list:
         plt.ylabel('Last Concept')
         plt.xticks(rotation=45, ha='right')
         plt.grid(True)
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'BPI_Challenge_2017':
         mean_requested_amount_per_group = df_2017_clean_sequence.groupby('case:concept:name')['case:RequestedAmount'].mean().reset_index(name='mean_requested_amount')
@@ -533,7 +538,7 @@ for file_name in file_list:
         plt.ylabel('Last Concept')
         plt.xticks(rotation=45, ha='right')
         plt.grid(True)
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
     if file_name == 'Road_Traffic_Fine_Management_Process':
         mean_requested_amount_per_group = df_road_traffic_clean_sequence.groupby('case:concept:name')['totalPaymentAmount'].mean().reset_index(name='mean_requested_amount')
@@ -549,7 +554,7 @@ for file_name in file_list:
         plt.ylabel('Last Concept')
         plt.xticks(rotation=45, ha='right')
         plt.grid(True)
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 for file_name in file_list:
     if file_name == 'BPI_Challenge_2017':
@@ -566,7 +571,7 @@ for file_name in file_list:
         plt.ylabel('Frequency')
         plt.legend()
         plt.grid(True)
-        plt.show()
+        plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 print_terminal_width_symbol('#')
 print('\n')

@@ -24,6 +24,10 @@ sys.path.append(parent)
 from config import path_to_data_folder, slice_index, chosen_dataset
 from Sprint_1.cleaning_feature_extraction import print_centered_text, print_terminal_width_symbol
 
+# artifacts folder creation
+os.makedirs(f'{os.getcwd()}/artifacts_models', exist_ok=True)
+path_to_artifacts = f'{os.getcwd()}/artifacts_models'
+
 # functions for outputs
 custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
 
@@ -47,7 +51,7 @@ sns.barplot(x=activity_counts.values, y=activity_counts.index)
 plt.xlabel('Frequency')
 plt.ylabel('Activity')
 plt.title('Activity Frequency')
-plt.show()
+plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 
 # Assuming 'time:timestamp' is the timestamp and 'case:concept:name' is the case ID
@@ -60,7 +64,7 @@ sns.histplot(case_durations['duration'], bins=30, kde=True)
 plt.xlabel('Duration (Hours)')
 plt.ylabel('Count')
 plt.title('Case Duration Distribution')
-plt.show()
+plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 activities_per_case = df.groupby('case:concept:name').size()
 
@@ -69,7 +73,7 @@ sns.histplot(activities_per_case, bins=30, kde=True)
 plt.xlabel('Number of Activities')
 plt.ylabel('Count')
 plt.title('Number of Activities per Case')
-plt.show()
+plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 # Extract prefixes ('W_', 'O_', 'A_')
 df['prefix'] = df['concept:name'].str.split('_').str[0]
@@ -117,7 +121,7 @@ nx.draw_networkx_labels(G, pos, font_size=5, font_family="sans-serif")
 
 plt.title("Network Graph of Process Activities")
 plt.axis("off")  # Turn off the axis
-plt.show()
+plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
 df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
 
