@@ -30,7 +30,7 @@ if not os.path.exists(f'{path_to_data_dick}/BPI_Challenge_2012.csv'):
     pm4py.view_dotted_chart(log_2012, format="png")
 
     map_2012 = pm4py.discover_heuristics_net(log_2012)
-    pm4py.view_heuristics_net(map_2012)
+    #pm4py.view_heuristics_net(map_2012)
 
     dataframe_2012 = pm4py.convert_to_dataframe(log_2012)
     print(f"Extracted BPI_Challenge_2012.xes.gz\n")
@@ -42,7 +42,7 @@ if not os.path.exists(f'{path_to_data_dick}/BPI_Challenge_2017.csv'):
     log_2017 = pm4py.read_xes(f'{path_to_data_folder}/BPI Challenge 2017.xes.gz')
     pm4py.view_dotted_chart(log_2017, format="png")
     map_2017 = pm4py.discover_heuristics_net(log_2017)
-    pm4py.view_heuristics_net(map_2017)
+    #pm4py.view_heuristics_net(map_2017)
 
     dataframe_2017 = pm4py.convert_to_dataframe(log_2017)
     print(f"Extracted BPI Challenge 2017.xes.gz\n")
@@ -53,7 +53,7 @@ if not os.path.exists(f'{path_to_data_dick}/Road_Traffic_Fine_Management_Process
     log_traffic = pm4py.read_xes(f'{path_to_data_folder}/Road_Traffic_Fine_Management_Process.xes.gz')
     pm4py.view_dotted_chart(log_traffic, format="png")
     map_traffic = pm4py.discover_heuristics_net(log_traffic)
-    pm4py.view_heuristics_net(map_traffic)
+    #pm4py.view_heuristics_net(map_traffic)
     
     dataframe_traffic = pm4py.convert_to_dataframe(log_traffic)
     print(f"Extracted Road_Traffic_Fine_Management_Process.xes.gz\n")
