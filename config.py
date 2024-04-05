@@ -5,7 +5,10 @@ path_to_data_folder = '/Users/alexraudvee/Desktop/TU_e/year_2/Q3Y2_Process_Minin
 slice_index = None
 
 # slice the traces for faster run of predictions for traces
-slice_traces = 1000
+slice_traces = 50
 
 # choose the dataset: BPI_Challenge_2012, BPI_Challenge_2017 preferably
 chosen_dataset =  'BPI_Challenge_2017'
+
+# indicate if you run this code for the first time
+first_run = False

@@ -530,8 +530,4 @@ if not os.path.exists(f'data/traces_{chosen_dataset}.json'):
 
         df_final.to_json(f'data/traces_{chosen_dataset}.json', orient='records')
 
-        if os.path.exists(f'data/{event_log_file}.xes'):
-            # Remove the file
-            os.remove(f'data/{event_log_file}.xes')
-
 print(f'Traces are extracted and saved in the data folder')

@@ -1,6 +1,7 @@
 import pickle
 import os 
 import sys
+import warnings
 
 import pandas as pd
 import numpy as np
@@ -22,12 +23,19 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from config import path_to_data_folder, slice_index, chosen_dataset
-from Sprint_1.func import print_centered_text, print_terminal_width_symbol, saver
+from func import print_centered_text, print_terminal_width_symbol, saver
+
+warnings.filterwarnings("ignore", message="The provided callable <built-in function min> is currently using SeriesGroupBy.min.*")
+warnings.filterwarnings("ignore", message="The provided callable <built-in function max> is currently using SeriesGroupBy.max.*")
 
 # artifacts folder creation
 os.makedirs(f'{os.getcwd()}/artifacts_models', exist_ok=True)
 path_to_artifacts = f'{os.getcwd()}/artifacts_models'
 
+print_terminal_width_symbol('#')
+print('\n')
+print_centered_text("TRAINING THE MODELS FOR NEXT EVENT PREDICTIONS")
+print('\n')
 # functions for outputs
 custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
 
@@ -113,8 +121,6 @@ plt.title("Network Graph of Process Activities")
 plt.axis("off")  # Turn off the axis
 plt.savefig(os.path.join(path_to_artifacts, f"{plt.gca().get_title()}.png"))
 
-print_terminal_width_symbol('#')
-
 df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
 
 # Generate event sequence numbers within each case
@@ -180,9 +186,8 @@ df['next concept:name naive'] = df.groupby('case:concept:name')['next concept:na
 # drop columns that are not going to be used
 df = df.drop(columns=['column_similarity_percentage', 'predicted_start_time', 'elapsed_time_from_start', 'time_to_next_event_seconds', 'event_seq', 'A', 'O', 'W', 'prefix'], errors='ignore')
 
-# save to the csv 
-saver(df, f'data/{chosen_dataset}_naive.csv')
 
+print('\n')
 print_terminal_width_symbol(symbol='#')
 print('\n')
 print_centered_text("METRICS FOR BASELINE MODEL (NAIVE)")
@@ -190,8 +195,9 @@ print('\n')
 print(f"""
         Accuracy Next Event Prediction (Naive): {accuracy}% \n
         R\u00B2 of Time Prediction (Naive): {r2_time}\n  
-        MAE Time Prediction (Naive): {mae_time} \n
+        MAE Time Prediction (Naive): {mae_time /60 /60 } in hours\n
 """)
+saver(df, f'data/{chosen_dataset}_naive.csv')
 print_terminal_width_symbol(symbol='#')
 
 
@@ -455,7 +461,6 @@ grid_search.fit(X_train, y_train)
 best_params = grid_search.best_params_
 best_estimator = grid_search.best_estimator_
 
-print(f"best params: {best_params}")
 
 # Save the best model
 model_filename = 'model_weights/xgboost.joblib'
@@ -467,11 +472,7 @@ y_pred_test = np.abs(best_estimator.predict(X_test))
 # Evaluate the model on the test set
 rmse_test = np.sqrt(mean_squared_error(y_test, y_pred_test))
 mae_test = mean_absolute_error(y_test, y_pred_test)
-print(f'Test RMSE: {rmse_test}')
-print(f'Test MAE: {mae_test}')
-
 r2_score_value = r2_score(y_test, y_pred_test)
-print(f'R² score: {r2_score_value}')
 
 # Update the dataframe with predictions from the best model
 df['elapsed time:timestamp XGBoost'] = np.abs(np.where(best_estimator.predict(X) < 0, np.abs(best_estimator.predict(X)) / 10000, best_estimator.predict(X) / 1000))
@@ -499,7 +500,7 @@ print('\n')
 print(f"""
       Next Event Prediction Accuracy (Random Forest Classifier):  {rfc_score}\n
       Next Time Prediction R\u00B2 score (XGBoost Regressor): {r2_score_value}\n
-      RMSE Time Prediction (XGBoost): {rmse_test} in seconds\n
-      MAE Time Prediction (XGBoost): {mae_test} in seconds\n
+      RMSE Time Prediction (XGBoost): {rmse_test/60/60} in hours\n
+      MAE Time Prediction (XGBoost): {mae_test/60/60} in hours\n
 """)
 print_terminal_width_symbol('#')

@@ -5,6 +5,7 @@ Sprint_3/__pycache__/
 data/
 artifacts_exp/
 artifacts_models/
+artifacts_traces_model/
 .venv/
 model_weights/
 .idea/

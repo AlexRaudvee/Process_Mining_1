@@ -2,6 +2,8 @@ import shutil
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
+from ast import literal_eval
+import json
 
 custom_format = "{desc}: {percentage:.0f}%\x1b[33m|\x1b[0m\x1b[32m{bar}\x1b[0m\x1b[31m{remaining}\x1b[0m\x1b[33m|\x1b[0m {n}/{total} [{elapsed}<{remaining}]"
 
@@ -86,3 +88,30 @@ def print_centered_text(text, symbol=" "):
     # Print the symbol and the text with spaces
     print(symbol * num_spaces_before + text + symbol * num_spaces_after)
 
+
+def extract_events(trace_list):
+    try:
+        trace_list_evaluated = literal_eval(
+            trace_list) if isinstance(trace_list, str) else trace_list
+        return [event['concept:name'] for event in trace_list_evaluated]
+    except (ValueError, SyntaxError):
+        # In case of any error during conversion, return an empty list or handle as needed
+        print(f"Error processing trace: {trace_list}")
+        return []
+
+
+# Function to calculate the Jaccard Similarity for two sets
+def jaccard_similarity(set1, set2):
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    return intersection / union if union != 0 else 0
+
+
+def safely_parse_json(data):
+    if isinstance(data, str):
+        try:
+            return json.loads(data)
+        except ValueError as e:
+            print(f"Error parsing JSON: {e}")
+            return None  # or {}, [] depending on expected data type
+    return data
