@@ -10,5 +10,9 @@ slice_traces = 50
 # choose the dataset: BPI_Challenge_2012, BPI_Challenge_2017 preferably
 chosen_dataset =  'BPI_Challenge_2017'
 
-# indicate if you run this code for the first time
-first_run = False
+# indicate if you run this code for the first time 
+""""""
+# !!! IMPORTANT !!!
+# SET TO TRUE IF YOU WANT TO SEE HOW RUNS THE FEATURE EXTRACTION AND FILTERING 
+""""""
+first_run = True
