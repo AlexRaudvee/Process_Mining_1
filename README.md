@@ -112,5 +112,5 @@ ___
   ```
 ___
 ## How to run the code
-1. Change the path to the original data in the **config.py** file, as well we recommend to slice the data, variable for this is also available in config file. 
+1. Change the path to the original data in the **config.py** file, as well we recommend to slice the data, variable for this is also available in config file. (recommended to slice a 10_000), change the first_run variable if needed, choose the dataset (BPI_Challenge_2017 is recommended), slice traces (50 or 100 is recommended).
 2. Run the **main.py** file. All the progress can be seen in your terminal during the run process.
